@@ -1,0 +1,93 @@
+# MSYS2 UCRT64 native Windows build (PDCursesMod VT only).
+# Use the top-level Makefile: make, make original, make japanese, etc.
+# PDCursesMod package: mingw-w64-ucrt-x86_64-pdcurses.
+# Windows icon resource: mingw-w64-ucrt-x86_64-binutils (windres).
+CC = gcc
+WINDRES ?= windres
+MINGW_PREFIX ?= /ucrt64
+PROG ?=
+PROGRAM ?= $(if $(PROG),$(PROG),rogue)
+DEFAULT_LANGUAGE ?= 0
+FILEDIR ?=
+ifneq ($(strip $(FILEDIR)),)
+SAVEFILE ?= $(FILEDIR)/$(PROGRAM).save
+SCOREFILE ?= $(FILEDIR)/$(PROGRAM).scr
+LOCKFILE ?= $(FILEDIR)/$(PROGRAM).lck
+else
+SAVEFILE ?= $(PROGRAM).save
+SCOREFILE ?= $(PROGRAM).scr
+LOCKFILE ?= $(PROGRAM).lck
+endif
+
+# Shared with the macOS/Linux Makefile; native services are Windows-only.
+include sources.mk
+CFILES = $(ROGUE_COMMON_CFILES) $(ROGUE_WINDOWS_CFILES)
+OBJS = $(CFILES:.c=.win.o)
+ICON_OBJ = windows/rogue-icon.win.o
+WIN_DISTNAME = rogue_dos_tribute_jec091_windows
+HEADERS = $(ROGUE_COMMON_HEADERS) $(ROGUE_WINDOWS_HEADERS)
+CFLAGS ?= -O2 -g -Wall -Wextra
+DEFAULT_OPTION_CPPFLAGS ?=
+USER_CPPFLAGS := $(CPPFLAGS)
+# Quote -D strings as one shell word (paths with spaces are preserved).
+shell_quote = '$(subst ','"'"',$(1))'
+CPP_SAVEFILE = $(call shell_quote,"$(SAVEFILE)")
+CPP_SCOREFILE = $(call shell_quote,"$(SCOREFILE)")
+CPP_LOCKFILE = $(call shell_quote,"$(LOCKFILE)")
+override CPPFLAGS := -DHAVE_CONFIG_H -DPDC_WIDE=1 -DPDC_FORCE_UTF8=1 \
+                     -I$(MINGW_PREFIX)/include/pdcurses -I. \
+                     -DDEFAULT_SAVEFILE=$(CPP_SAVEFILE) \
+                     -DSCOREFILE=$(CPP_SCOREFILE) -DLOCKFILE=$(CPP_LOCKFILE) \
+                     -DDEFAULT_LANGUAGE=$(DEFAULT_LANGUAGE) \
+                     $(DEFAULT_OPTION_CPPFLAGS) $(USER_CPPFLAGS) $(EXTRA_CPPFLAGS)
+ifeq ($(MASTER),1)
+override CPPFLAGS += -DMASTER
+endif
+LDFLAGS ?=
+LDLIBS = -lpdcurses_vt -lwinmm -luser32 -lgdi32 -lshell32 -lshlwapi -ladvapi32 -lcomdlg32
+
+.PHONY: all clean japanese english original master wizard dist.src dist.win
+all: $(PROGRAM).exe
+%.win.o: %.c $(HEADERS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+$(ICON_OBJ): windows/rogue-icon.rc windows/rogue.ico
+	$(WINDRES) -I windows -i windows/rogue-icon.rc -O coff -o $@
+$(PROGRAM).exe: $(OBJS) $(ICON_OBJ)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(ICON_OBJ) $(LDLIBS)
+clean:
+	rm -f $(OBJS) $(ICON_OBJ) $(PROGRAM).exe
+# Do not delete save, score or lock files under any clean target.
+japanese:
+	$(MAKE) ROGUE_BUILD=windows clean
+	$(MAKE) ROGUE_BUILD=windows all DEFAULT_LANGUAGE=1
+english:
+	$(MAKE) ROGUE_BUILD=windows clean
+	$(MAKE) ROGUE_BUILD=windows all DEFAULT_LANGUAGE=2
+# Rogue DOS Tribute already uses DOS-style defaults. "original" changes only
+# the initial display language; it does not alter the game or color defaults.
+original:
+	$(MAKE) ROGUE_BUILD=windows clean
+	$(MAKE) ROGUE_BUILD=windows all DEFAULT_LANGUAGE=$(if $(filter command line,$(origin DEFAULT_LANGUAGE)),$(DEFAULT_LANGUAGE),2)
+master:
+	$(MAKE) ROGUE_BUILD=windows clean
+	$(MAKE) ROGUE_BUILD=windows all MASTER=1
+wizard: master
+# Share one manifest and packaging path with macOS and Linux.
+dist.src:
+	$(MAKE) ROGUE_BUILD=unix dist.src
+
+# Windows distribution ZIP: executable and user documentation only.
+# Build in a temporary directory and replace the destination only on success.
+# Requires the MSYS2 zip utility; no separate test or DLL collection scripts.
+dist.win: $(PROGRAM).exe
+	@set -eu; \
+	    stage=$$(mktemp -d "$${TMPDIR:-/tmp}/rogue-dos-tribute-win.XXXXXXXX"); \
+	    trap 'rm -rf "$$stage"' 0; \
+	    trap 'exit 1' 1 2 3 15; \
+	    mkdir -p "$$stage/$(WIN_DISTNAME)"; \
+	    cp "$(PROGRAM).exe" LICENSE.TXT README_windows_ja.txt README_windows_en.txt \
+	       rogue_ja.txt rogue_en.txt rogue_ja.html rogue_en.html \
+	       "$$stage/$(WIN_DISTNAME)/"; \
+	    (cd "$$stage" && zip -qr "$$stage/candidate.zip" "$(WIN_DISTNAME)"); \
+	    mv "$$stage/candidate.zip" "$(CURDIR)/$(WIN_DISTNAME)-$(PROGRAM).zip"; \
+	    echo "Created $(WIN_DISTNAME)-$(PROGRAM).zip."

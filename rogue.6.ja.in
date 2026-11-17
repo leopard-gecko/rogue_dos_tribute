@@ -1,0 +1,107 @@
+.\"
+.\" @(#)rogue.6	6.2 (Berkeley) 5/6/86
+.\"
+.\" Rogue: 運命の洞窟を冒険する
+.\" Copyright (C) 1980-1983, 1985, 1986 Michael Toy, Ken Arnold and Glenn Wichman
+.\" All rights reserved.
+.\"
+.\" See the file LICENSE.TXT for full copyright and licensing information.
+.\"
+.TH @PROGRAM@ 6 "May 6, 1986"
+.UC 4
+.SH NAME
+@PROGRAM@ \- 運命の洞窟を冒険する
+.SH SYNOPSIS
+.B @PROGRAM@
+.RB [ \-r ]
+.RI [ save_file ]
+.RB [ \-s ]
+.SH DESCRIPTION
+.PP
+Rogue DOS TributeはRogue 5.4系のソースを基盤に、Epyx社のDOS版
+Rogue 1.48を参考に再構成した派生版です。DOS 1.48の原典ソース
+をそのまま移植したものではありません。
+.PP
+.I Rogue
+ローグは新しい趣向を持っているコンピューター・ファンタジー・ゲームです。
+.br
+大部分のコンピューター・ファンタジーゲームのように
+.br
+謎解きを指向したものではなく、
+.br
+モニター指向であり、様々な怪物の攻撃から生き抜いたり、
+.br
+たくさんの金塊を集めることを目的にしています。
+.PP
+ゲームを始めるために本当に必要なコマンドは二つです。
+コマンド「\fB?\fP」は入力可能なコマンドを表示し、
+コマンド「\fB/\fP」は画面に現れる記号の一覧を表示します。
+.PP
+DOS版に近いキー操作はデフォルトで有効です。ROGUEOPTS に \fBnodoskeys\fP を指定すると無効にできます。
+DOS版風キー操作では \fB+\fP が投げる、\fB-\fP がつえ/魔法の棒、\fBf\fP がfind接頭辞、
+\fBg\fP が拾わずに進む接頭辞になり、F1〜F10や矢印キーの代替入力も変換されます。
+DOS版風キー操作では \fBF\fP でコマンドマクロを登録・変更し、Ctrl-F で実行します。\fBM\fP と \fBx\fP はこのモードではコマンドではありません。\fBnodoskeys\fP では M で登録・変更、x で実行します。
+このモードでは \fB!\fP と F10 で fake DOS を開き、\fBrogue\fP と入力するか Esc を押すとゲームに戻ります。
+.PP
+（単に他の人のハイスコアに勝つのではなく）ゲームに勝利するためには、
+ダンジョンの２０階以下のどこかにあるイェンダーの魔除けを見つけ出し、
+地上に持ち帰らなければなりません。
+まだ誰もそれを達成したことがなく、それを成し遂げたならば、
+.br
+英雄の中の英雄として歴史に残ることでしょう。
+.PP
+ゲームが終了した時、それが死か中断か（いくらかの奇跡による）
+勝利であるかに寄らず、
+.I @PROGRAM@
+はトップ10のスコアを出します。
+得点は金塊をどのくらい集めたかに基準を置いています。
+殺された場合は10%のペナルティーが引かれます。
+.PP
+\fIsave_file\fP が指定された時は、\fI@PROGRAM@\fP は
+.br
+指定されたファイルからゲームを再開します。
+.br
+「\fB\-r\fP」オプションが使われた時は、
+.br
+セーブファイルはデフォルト名であるとみなされます。
+.PP
+「\fB\-s\fP」オプションはスコアのリストを表示します。
+.PP
+より詳しい解説は、
+.I 「運命の洞窟へのガイド」
+を読んでください。
+.SH AUTHORS
+Michael C. Toy,
+Kenneth C. R. C. Arnold,
+Glenn Wichman
+.SH LANGUAGE
+起動時の表示言語は、\fBROGUEOPTS\fP に
+\fBlanguage=ja\fP、\fBlanguage=en\fP、または
+\fBlanguage=auto\fP を指定して選択できます。
+ROGUEOPTS の指定はビルド時の既定値より優先されます。
+通常ビルドの既定値は auto です。
+.br
+Unix 系では auto のとき \fBLC_ALL\fP、\fBLC_MESSAGES\fP、\fBLANG\fP
+の順に参照し、日本語ロケールなら日本語、それ以外は英語になります。
+Windows ではユーザーの UI 言語から判定します。
+.br
+オプション画面では日本語と英語だけを選択します。日本語は \fBJ\fP、
+英語は \fBE\fP を押します。auto は初期言語を決めるためだけに使用されます。
+.SH FILES
+.TP
+.I @SCOREFILE@
+スコアファイル
+.TP
+.I @SAVEFILE@
+デフォルトのセーブファイル
+.SH SEE ALSO
+Michael C. Toy
+and
+Kenneth C. R. C. Arnold,
+.I 「運命の洞窟へのガイド」
+.SH BUGS
+.PP
+おそらく無限（加算的な無限ではあるにせよ）。
+氷の怪物が時々プレーヤーを永久に固まらせますが、
+.br
+これはバグではありません。仕様です。

@@ -1,0 +1,134 @@
+.\"
+.\" @(#)rogue.6	6.2 (Berkeley) 5/6/86
+.\"
+.\" Rogue: Exploring the Dungeons of Doom
+.\" Copyright (C) 1980-1983, 1985, 1986 Michael Toy, Ken Arnold and Glenn Wichman
+.\" All rights reserved.
+.\"
+.\" See the file LICENSE.TXT for full copyright and licensing information.
+.\"
+.TH @PROGRAM@ 6 "May 6, 1986"
+.UC 4
+.SH NAME
+@PROGRAM@ \- Exploring The Dungeons of Doom
+.SH SYNOPSIS
+.B @PROGRAM@
+.RB [ \-r ]
+.RI [ save_file ]
+.RB [ \-s ]
+.SH DESCRIPTION
+.PP
+Rogue DOS Tribute is a derivative based on Rogue 5.4-family source code
+and inspired by Epyx DOS Rogue 1.48; it is not a port of the original
+DOS 1.48 source.
+.PP
+.I Rogue
+is a computer fantasy game with a new twist.  It is crt oriented and the
+object of the game is to survive the attacks of various monsters and get
+a lot of gold, rather than the puzzle solving orientation of most computer
+fantasy games.
+.PP
+To get started you really only need to know two commands.  The command
+.B ?
+will give you a list of the available commands and the command
+.B /
+will identify the things you see on the screen.
+.PP
+DOS-style key bindings are enabled by default.  The ROGUEOPTS option
+.B nodoskeys
+disables them.  With DOS-style key bindings,
+.B +
+throws,
+.B -
+zaps a staff or wand,
+.B f
+is the find prefix, and
+.B g
+moves without picking up.
+In DOS-style key mode,
+.B F
+defines or changes the command macro and Ctrl-F runs it.
+.B M
+and
+.B x
+are not commands in that mode.  With \fBnodoskeys\fP, M defines or changes the macro and x runs it.
+F1 through F10 and arrow-key alternatives are translated for those key bindings.
+In that mode, \fB!\fP and F10 open fake DOS;
+type \fBrogue\fP or press Esc to return to the game.
+.PP
+To win the game (as opposed to merely playing to beat other people's high
+scores) you must locate the Amulet of Yendor which is somewhere below
+the 20th level of the dungeon and get it out.  Nobody has achieved this
+yet and if somebody does, they will probably go down in history as a hero
+among heroes.
+.PP
+When the game ends, either by your death, when you quit, or if you (by
+some miracle) manage to win,
+.I @PROGRAM@
+will give you a list of the top-ten scorers.  The scoring is based entirely
+upon how much gold you get.  There is a 10% penalty for getting yourself
+killed.
+.PP
+If
+.I save_file
+is specified,
+.I @PROGRAM@
+will be restored from the specified saved game file.
+If the
+.B \-r
+option is used, the save game file is presumed to be the default.
+.PP
+The
+.B \-s
+option will print out the list of scores.
+.PP
+For more detailed directions, read the document
+.I "A Guide to the Dungeons of Doom."
+.SH AUTHORS
+Michael C. Toy,
+Kenneth C. R. C. Arnold,
+Glenn Wichman
+.SH LANGUAGE
+The startup display language can be selected in
+.B ROGUEOPTS
+with
+.BR language=ja ,
+.BR language=en ,
+or
+.BR language=auto .
+The ROGUEOPTS setting overrides the build-time default.
+The normal build defaults to auto.
+On Unix-like systems, auto checks
+.BR LC_ALL ,
+.BR LC_MESSAGES ,
+and
+.B LANG
+in that order; Japanese locales select Japanese and other locales select English.
+Native Windows uses the user's UI language.
+.PP
+The options screen offers only Japanese and English.  Press
+.B J
+for Japanese or
+.B E
+for English.  auto is used only to choose the initial language.
+.SH FILES
+.TP
+.I @SCOREFILE@
+Score file
+.TP
+.I @SAVEFILE@
+Default save file
+.SH SEE ALSO
+Michael C. Toy
+and
+Kenneth C. R. C. Arnold,
+.I "A guide to the Dungeons of Doom"
+.SH BUGS
+.PP
+Probably infinite
+(although countably infinite).
+However,
+that Ice Monsters sometimes transfix you permanently is
+.I not
+a bug.
+It's a feature.

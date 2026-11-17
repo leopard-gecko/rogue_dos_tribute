@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rogue DOS Tribute — A Guide to the Dungeons of Doom</title>
+<style type="text/css">
+body {
+    font-family: Menlo, Monaco, Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.45;
+    margin: 60px;
+    max-width: 900px;
+}
+pre {
+    white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+<pre>
+
+
+
+
+
+
+              A Guide to the Dungeons of Doom
+
+
+                       Michael C. Toy
+                  Kenneth C. R. C. Arnold
+
+
+              Computer Systems Research Group
+ Department of Electrical Engineering and Computer Science
+                  University of California
+                Berkeley, California  94720
+
+
+
+
+                          ABSTRACT
+
+    Rogue  is a visual CRT based fantasy game which runs
+    under the UNIX timesharing system.  This  paper  de-
+    scribes how to play rogue, and gives a few hints for
+    those who might otherwise get lost in  the  Dungeons
+    of Doom.
+
+
+
+
+1.  Introduction
+
+     You  have  just finished your years as a student at the
+local fighter&#x27;s guild.  After much practice  and  sweat  you
+have finally completed your training and are ready to embark
+upon a perilous adventure.  As a test of  your  skills,  the
+local  guildmasters have sent you into the Dungeons of Doom.
+Your task is to return with  the  Amulet  of  Yendor.   Your
+reward  for  the completion of this task will be a full mem-
+bership in the local guild.  In addition, you are allowed to
+keep all the loot you bring back from the dungeons.
+
+     In  preparation  for  your  journey,  you  are given an
+enchanted mace, a bow, and a quiver of arrows taken  from  a
+dragon&#x27;s  hoard in the far off Dark Mountains.  You are also
+outfitted with elf-crafted armor and given  enough  food  to
+reach  the  dungeons.  You say goodbye to family and friends
+for what may be the last time and head up the road.
+
+     You set out on your way to the dungeons and after  sev-
+eral  days  of  uneventful travel, you see the ancient ruins
+that mark the entrance to the Dungeons of Doom.  It is  late
+at  night,  so  you  make camp at the entrance and spend the
+____________________
+   UNIX is a trademark of Bell Laboratories
+
+
+
+
+
+
+
+
+
+
+
+
+USD:33-2                     A Guide to the Dungeons of Doom
+
+
+night sleeping under the open skies.   In  the  morning  you
+gather  your  weapons, put on your armor, eat what is almost
+your last food, and enter the dungeons.
+
+2.  What is going on here?
+
+     You have just begun a game of rogue.  Your goal  is  to
+grab as much treasure as you can, find the Amulet of Yendor,
+and get out of the Dungeons of Doom alive.  On the screen, a
+map  of  where  you  have been and what you have seen on the
+current dungeon level is kept.  As you explore more  of  the
+level, it appears on the screen in front of you.
+
+     Rogue  differs from most computer fantasy games in that
+it  is  screen  oriented.   Commands  are  all  one  or  two
+keystrokes1  and  the results of your commands are displayed
+graphically on the screen rather  than  being  explained  in
+words.2
+
+     Another  major  difference between rogue and other com-
+puter fantasy games is that once you  have  solved  all  the
+puzzles  in a standard fantasy game, it has lost most of its
+excitement and it ceases to be fun.   Rogue,  on  the  other
+hand,  generates  a  new  dungeon every time you play it and
+even the author finds it an entertaining and exciting  game.
+
+3.  What do all those things on the screen mean?
+
+     In  order  to  understand what is going on in rogue you
+have to first get some grasp of what rogue is doing with the
+screen.   The  rogue  screen is intended to replace the &quot;You
+can see ...&quot; descriptions of standard fantasy games.  Figure
+1 is a sample of what a rogue screen might look like.
+
+3.1.  The bottom line
+
+     At  the  bottom  line of the screen are a few pieces of
+cryptic information describing your current status.  Here is
+an explanation of what these things mean:
+
+Level  This  number  indicates how deep you have gone in the
+       dungeon.  It starts at one and  goes  up  as  you  go
+       deeper into the dungeon.
+
+Gold   The  number  of  gold pieces you have managed to find
+       and keep with you so far.
+____________________
+   1 As opposed to pseudo English sentences.
+   2  A minimum screen size of 24 lines by 80 columns is re-
+quired.  If the screen is larger,  only  the  24x80  section
+will be used for the map.
+
+
+
+
+
+
+
+
+
+
+
+
+A Guide to the Dungeons of Doom                     USD:33-3
+
+
+
+____________________________________________________________
+
+
+                        ------------
+                        |..........+
+                        |..@....]..|
+                        |....B.....|
+                        |..........|
+                        -----+------
+
+
+
+Level: 1  Hits: 12(12)  Str: 16(16)  Gold: 0      Armor: 5
+
+                          Figure 1
+____________________________________________________________
+
+
+Hits   Your  current  and  maximum  health  points.   Health
+       points  indicate  how much damage you can take before
+       you die.  The more you get hit in a fight, the  lower
+       they  get.   You can regain health points by resting.
+       The number in parentheses is the maximum number  your
+       health points can reach.
+
+Str    Your  current  strength  and  maximum  ever strength.
+       This can be any integer less than or equal to 31,  or
+       greater  than or equal to three.  The higher the num-
+       ber, the stronger you are.  The number in the  paren-
+       theses  is  the maximum strength you have attained so
+       far this game.
+
+Arm    Your current armor protection.  This number indicates
+       how  effective  your  armor is in stopping blows from
+       unfriendly creatures.  The higher this number is, the
+       more effective the armor.
+
+Rank   The rightmost field shows the rank name for your
+       current experience level.  It is blank at experience level 1; as
+       you gain experience it shows ranks such as Guild Novice
+       and Apprentice.  As you do things, you gain experience
+       points.  At certain experience point totals, you gain
+       an experience level.  The more experienced you are, the
+       better you are able to fight and to withstand magical
+       attacks.
+
+3.2.  The top line
+
+     The top line of the screen  is  reserved  for  printing
+messages  that describe things that are impossible to repre-
+sent visually.  If you see a &quot;--More--&quot;  on  the  top  line,
+this  means that rogue wants to print another message on the
+screen, but it wants to make certain that you have read  the
+one  that  is  there  first.  To read the next message, just
+
+
+
+
+
+
+
+
+
+
+USD:33-4                     A Guide to the Dungeons of Doom
+
+
+type a space.
+
+3.3.  The rest of the screen
+
+     The rest of the screen is the map of the level  as  you
+have  explored  it so far.  Each symbol on the screen repre-
+sents something.  Here is a list of what the various symbols
+mean:
+
+@    This symbol represents you, the adventurer.
+
+-|   These symbols represent the walls of rooms.
+
++    A door to/from a room.
+
+.    The floor of a room.
+
+#    The floor of a passage between rooms.
+
+*    A pile or pot of gold.
+
+)    A weapon of some sort.
+
+]    A piece of armor.
+
+!    A flask containing a magic potion.
+
+?    A piece of paper, usually a magic scroll.
+
+=    A ring with magic properties
+
+/    A magical staff or wand
+
+^    A trap, watch out for these.
+
+%    A staircase to other levels
+
+:    A piece of food.
+
+A-Z  The uppercase letters represent the various inhabitants
+     of the Dungeons of Doom.  Watch out, they can be  nasty
+     and vicious.
+
+4.  Commands
+
+     Commands are given to rogue by typing one or two characters. Most
+     commands can be preceded by a count to repeat them (e.g. typing
+     &quot;10s&quot; will do ten searches). Commands for which counts make no
+     sense have the count ignored. To cancel a count or a prefix, press
+     &lt;ESCAPE&gt;. The command list is available during play with the &quot;?&quot;
+     command.
+
+     The following commands use the DOS-style key bindings (doskeys),
+     which are enabled by default. You can select the alternative key
+     bindings with ROGUEOPTS=nodoskeys; the in-game &quot;?&quot; command then
+     shows the keys available in that mode. Directions can also be
+     entered with the arrow keys or numeric keypad. Where supported,
+     Shift+direction runs and Ctrl+direction runs until something
+     interesting is nearby.
+
+
+
+
+
+A Guide to the Dungeons of Doom                     USD:33-5
+
+
+
+?    Help. List the commands available in the current key mode.
+
+/    List the symbols used on the screen and what they mean.
+
+F1   Show the command list (same as &quot;?&quot;).
+
+F2   Show the screen-symbol list (same as &quot;/&quot;).
+
+F3   Repeat the last command (same as &quot;a&quot;).
+
+F4   Repeat the last message (same as Ctrl-R).
+
+F5   Give an object type a call name (same as &quot;c&quot;).
+
+F6   List previously discovered object types (same as &quot;D&quot;).
+
+F7   Display your inventory (same as &quot;i&quot;).
+
+F8   Identify a trap in a specified direction (same as &quot;^&quot;).
+
+F9   The Any Key. Run the defined command macro (same as Ctrl-F).
+
+F10  Enter fake DOS (same as &quot;!&quot;). Type &quot;rogue&quot; or press &lt;ESCAPE&gt; to
+     return to the game.
+
+h, H, Ctrl+direction
+     Move left. Lower-case &quot;h&quot; moves one space. Upper-case &quot;H&quot; runs left
+     until stopped; this also works with the other movement letters.
+     Ctrl+direction moves in the chosen direction until something
+     interesting is nearby or a wall stops you. Arrow keys and the
+     numeric keypad can also be used for movement.
+
+j    Move down.
+
+k    Move up.
+
+l    Move right.
+
+y    Move diagonally up and left.
+
+u    Move diagonally up and right.
+
+b    Move diagonally down and left.
+
+n    Move diagonally down and right.
+
+f    Find/fast prefix. Follow it with a direction to continue moving
+     until something interesting is nearby or you hit a wall. For
+     example, &quot;fh&quot; heads left.
+
+g    Move without picking up. Follow it with a direction to move one
+     space onto an object without picking it up.
+
++    Throw an object. This is a prefix command. Follow it with a
+     direction and select the object to throw.
+
+-    Zap a staff or wand. Follow it with a direction, even for a staff
+     or wand whose effect does not depend on direction.
+
+
+
+
+
+USD:33-6                     A Guide to the Dungeons of Doom
+
+
+
+^    Identify a trap. If a trap is shown on your map but you have
+     forgotten its type, stand next to it and type &quot;^&quot; followed by the
+     direction toward the trap.
+
+s    Search for traps and secret doors in adjacent spaces. You may have
+     to search repeatedly to find a hidden feature.
+
+&gt;    Climb down a staircase to the next level. You must be standing on
+     the staircase.
+
+&lt;    Climb up a staircase. You need the Amulet of Yendor to do this.
+
+.    Rest for one turn. Useful for waiting and recovering.
+
+i    Inventory. Clear the screen and list the items you are carrying.
+
+q    Quaff one of the potions in your pack.
+
+r    Read one of the scrolls in your pack.
+
+e    Eat food from your pack.
+
+w    Wield a weapon from your pack, replacing the one currently wielded,
+     if any.
+
+W    Wear armor. You can wear only one suit at a time; putting it on
+     takes extra time.
+
+T    Take off armor. Cursed armor cannot be removed; taking armor off
+     takes extra time.
+
+P    Put on a ring. You can wear two rings, one on each hand. If neither
+     hand has a ring, you will be asked which hand to use.
+
+R    Remove a ring. If you are wearing two rings, you will be asked
+     which one to remove.
+
+
+
+
+
+A Guide to the Dungeons of Doom                     USD:33-7
+
+
+
+d    Drop an object from your pack. A space can hold only one object;
+     cursed equipment cannot be dropped while in use.
+
+c    Give a type of object a call name so you can remember what it does.
+
+D    Recall what has been discovered. List object types you have
+     identified or named.
+
+o    Examine and set options. See the section on options.
+
+a    Repeat the last command.
+
+F    Define or change The Any Key command macro.
+
+^F   Run the command macro (Ctrl-F, or F9).
+
+^R   Repeat the last message (Ctrl-R, or F4).
+
+^T   Toggle terse (short) messages (Ctrl-T).
+
+^L   Display the DOS-style screen-check message (Ctrl-L).
+
+&lt;ESCAPE&gt;
+     Cancel a command, prefix, or count.
+
+!    Enter fake DOS. Type &quot;rogue&quot; or press &lt;ESCAPE&gt; to return.
+
+Q    Quit the game.
+
+S    Save the current game in a file and exit. You will be asked whether
+     to use the default save file. A saved game cannot be restored
+     repeatedly: the save file is removed when the game is resumed. To
+     restore from the default file, run &quot;rogue -r&quot;; to restore a named
+     file, run &quot;rogue save_file&quot;.
+
+
+
+
+
+USD:33-8                     A Guide to the Dungeons of Doom
+
+
+
+v    Print the program version number.
+
+5.  Rooms
+
+     Rooms in the dungeons are either lit or dark.   If  you
+walk  into  a lit room, the entire room will be drawn on the
+screen as soon as you enter.  If you walk into a dark  room,
+it will only be displayed as you explore it.  Upon leaving a
+room, all monsters inside  the  room  are  erased  from  the
+screen.   In  the darkness you can only see one space in all
+directions around you.  A corridor is always dark.
+
+6.  Fighting
+
+     If you see a monster and you wish  to  fight  it,  just
+attempt  to run into it.  Many times a monster you find will
+mind its own business unless you attack it.  It is often the
+case that discretion is the better part of valor.
+
+7.  Objects you can find
+
+     When you find something in the dungeon, it is common to
+want to pick the object up.  This is accomplished  in  rogue
+by  walking  over the object (unless you use the &quot;g&quot; command,
+see above).  If you are carrying too many things,  the  pro-
+gram  will  tell you and it won&#x27;t pick up the object, other-
+wise it will add it to your pack and tell you what you  just
+picked up.
+
+     Many  of  the  commands  that  operate  on objects must
+prompt you to find out which object you want to use.  If you
+change  your  mind  and  don&#x27;t want to do that command after
+all, just type an &lt;ESCAPE&gt; and the command will be  aborted.
+
+     Some  objects,  like armor and weapons, are easily dif-
+ferentiated.  Others, like scrolls and  potions,  are  given
+labels which vary according to type.  During a game, any two
+
+
+
+
+
+
+
+
+
+
+A Guide to the Dungeons of Doom                     USD:33-9
+
+
+of the same kind of object with the same label are the  same
+type.  However, the labels will vary from game to game.
+
+     When  you  use  one  of  these  labeled objects, if its
+effect is obvious, rogue will remember what it is  for  you.
+If  it&#x27;s  effect  isn&#x27;t  extremely obvious you will be asked
+what you want to scribble on it so  you  will  recognize  it
+later, or you can use the &quot;call&quot; command (see above).
+
+7.1.  Weapons
+
+     Some  weapons,  like  arrows, come in bunches, but most
+come one at a time.  In order to  use  a  weapon,  you  must
+wield  it.   To  fire  an arrow out of a bow, you must first
+wield the bow, then throw the arrow.  You can only wield one
+weapon  at  a  time, but you can&#x27;t change weapons if the one
+you are currently wielding is cursed.  The commands  to  use
+weapons are &quot;w&quot; (wield) and &quot;+&quot; (throw).
+
+7.2.  Armor
+
+     There  are  various  sorts of armor lying around in the
+dungeon.  Some of it is enchanted, some is cursed, and  some
+is  just normal.  Different armor types have different armor
+protection.  The higher the armor protection, the more  pro-
+tection  the  armor  affords  against the blows of monsters.
+Here is a list of the various armor types and  their  normal
+armor protection:
+
+
+           +-----------------------------------------+
+           |  Type                        Protection |
+           |None                                   0 |
+           |Leather armor                          3 |
+           |Studded leather / Ring mail            4 |
+           |Scale mail                             5 |
+           |Chain mail                             6 |
+           |Banded mail / Splint mail              7 |
+           |Plate mail                             8 |
+           +-----------------------------------------+
+
+
+If  a piece of armor is enchanted, its armor protection will
+be higher than normal.  If a suit of armor  is  cursed,  its
+armor  protection will be lower, and you will not be able to
+remove it.  However, not all armor with a protection that is
+lower than normal is cursed.
+
+     The  commands  to  use  weapons  are &quot;W&quot; (wear) and &quot;T&quot;
+(take off).
+
+
+
+
+
+
+
+
+
+
+
+
+
+USD:33-10                    A Guide to the Dungeons of Doom
+
+
+7.3.  Scrolls
+
+     Scrolls come with titles in an unknown tongue3.   After
+you  read  a scroll, it disappears from your pack.  The com-
+mand to use a scroll is &quot;r&quot; (read).
+
+7.4.  Potions
+
+     Potions are labeled by the color of the  liquid  inside
+the flask.  They disappear after being quaffed.  The command
+to use a potion is &quot;q&quot; (quaff).
+
+7.5.  Staves and Wands
+
+     Staves and wands do the same kinds of  things.   Staves
+are  identified  by a type of wood; wands by a type of metal
+or bone.  They are generally things you want to do to  some-
+thing  over  a long distance, so you must point them at what
+you wish to  affect  to  use  them.   Some  staves  are  not
+affected  by the direction they are pointed, though.  Staves
+come with multiple magic charges, the number  being  random,
+and when they are used up, the staff is just a piece of wood
+or metal.
+
+     The command to use a wand or staff is &quot;-&quot; (zap)
+
+7.6.  Rings
+
+     Rings are very useful items, since they are  relatively
+permanent  magic,  unlike  the  usually  fleeting effects of
+potions, scrolls, and staves.  Of course, the bad rings  are
+also  more  powerful.   Most  rings also cause you to use up
+food more rapidly, the rate varying with the type  of  ring.
+Rings  are differentiated by their stone settings.  The com-
+mands to use rings are &quot;P&quot; (put on) and &quot;R&quot; (remove).
+
+7.7.  Food
+
+     Food is necessary to keep you going.   If  you  go  too
+long  without  eating  you will faint, and eventually die of
+starvation.  The command to use food is &quot;e&quot; (eat).
+
+8.  Options
+
+     Due to variations in personal tastes and conceptions of
+the  way  rogue should do things, there are a set of options
+you can set that cause rogue to behave in various  different
+____________________
+   3 Actually, it&#x27;s a dialect spoken only by the twenty-sev-
+en members of a tribe in Outer Mongolia, but you&#x27;re not sup-
+posed to know that.
+
+
+
+
+
+
+
+
+
+
+
+
+A Guide to the Dungeons of Doom                    USD:33-11
+
+
+ways.
+
+8.1.  Setting the options
+
+     There  are  two  ways to set the options.  The first is
+with the &quot;o&quot; command  of  rogue;  the  second  is  with  the
+&quot;ROGUEOPTS&quot; environment variable4.
+
+8.1.1.  Using the `o&#x27; command
+
+     When you type &quot;o&quot; in rogue, it clears  the  screen  and
+displays  the current settings for all the options.  It then
+places the cursor by the value of the first option and waits
+for  you to type.  You can type a &lt;RETURN&gt; which means to go
+to the next option, a &quot;-&quot; which means to go to the  previous
+option,  an  &lt;ESCAPE&gt;  which means to return to the game, or
+you can give the option a value.  For boolean  options  this
+merely  involves  typing &quot;t&quot; for true or &quot;f&quot; for false.  For
+string options, type the new value followed by a &lt;RETURN&gt;.
+
+8.1.2.  Using the ROGUEOPTS variable
+
+     The ROGUEOPTS variable is a string containing  a  comma
+separated  list  of  initial values for the various options.
+Boolean variables can be turned on by listing their name  or
+turned  off by putting a &quot;no&quot; in front of the name.  Thus to
+set up an environment variable so that jump is on, terse  is
+off, and the name is set to &quot;Blue Meanie&quot;, use the command
+   % setenv ROGUEOPTS &quot;jump,noterse,name=Blue Meanie&quot;5
+
+     The display language can be selected with the language
+option in ROGUEOPTS.  language=ja selects Japanese,
+language=en selects English, and language=auto chooses the
+initial language from the OS language setting.  ROGUEOPTS
+overrides the build-time default.  The normal build defaults
+to auto; Unix-like systems then check LC_ALL, LC_MESSAGES,
+and LANG, while native Windows uses the user's UI language.
+auto is only an initial-language mode.  During play, the
+option screen offers Japanese (J) and English (E).
+
+     ROGUEOPTS is read once at startup.  When restoring a game,
+the saved terse and jump values take precedence.
+
+8.2.  Option list
+
+     Here is a list of the options  and  an  explanation  of
+what  each  one  is  for.   The  default  value  for each is
+enclosed in square brackets.  For character string  options,
+input over fifty characters will be ignored.
+
+terse [noterse]
+     Shows shorter messages.  The default is noterse, and the
+     terminal speed does not change this setting.  It does not
+     alter unidentified scroll names or the symbol list layout.
+
+
+____________________
+   4  On  Version  6  systems, there is no equivalent of the
+ROGUEOPTS feature.
+   5  For  those of you who use the Bourne shell sh (1), the
+commands would be
+   $ ROGUEOPTS=&quot;jump,noterse,name=Blue Meanie&quot;
+   $ export ROGUEOPTS
+
+
+
+
+
+
+
+
+
+
+
+
+USD:33-12                    A Guide to the Dungeons of Doom
+
+
+jump [nojump]
+     If set, running moves will not be displayed until the
+     end of the move.  This reduces the number of screen
+     updates.  The default is nojump; terminal speed does
+     not change this setting.
+
+menu [on]
+     This is a ROGUEOPTS-only option and does not appear in
+     the in-game option screen.  It controls the DOS-style
+     inventory selection menu.  With on, an item-selection
+     list is shown before the ordinary prompt when a command
+     asks you to choose an item.  With sel, the list is shown
+     first for selective actions such as reading, quaffing,
+     wielding, or wearing, but not for eating or dropping.
+     With off, the ordinary prompt is used first, and the
+     list is shown only when you type &quot;*&quot;.  The inventory
+     list itself is always shown on a cleared screen.
+
+doskeys [doskeys]
+     This is a ROGUEOPTS-only option and does not appear in
+     the in-game option screen.  It selects the DOS-style
+     key bindings.  With doskeys, + throws, - zaps a staff
+     or wand, f is the find/fast prefix, and g moves without
+     picking up.  The default is doskeys; use nodoskeys to disable DOS-style key bindings.
+
+macro [v]
+     This option sets the command macro.  It can be set from
+     ROGUEOPTS or edited in the in-game option screen.  The
+     In DOS-style key mode, F defines or changes the macro and
+     Ctrl-F runs it; M and x are not commands.  With nodoskeys,
+     M defines or changes the macro and x runs it.  For example,
+     macro=s makes the run-macro command perform one search.
+     Self-call keys are stripped from saved macro text.
+
+name [account name]
+     This  is the name of your character.  It is used if you
+     get on the top ten scorer&#x27;s list.
+
+fruit [slime-mold]
+     This should hold the name of a  fruit  that  you  enjoy
+     eating.  It is basically a whimsey that rogue uses in a
+     couple of places.
+
+
+
+
+
+
+
+
+
+
+A Guide to the Dungeons of Doom                    USD:33-13
+
+
+color [color]
+     Display dungeon characters in color.  Floors, walls,
+passages, doors, objects, monsters, traps, and missiles
+are colorized when color mode is on.  The default build uses color.
+
+extchars [extchars]
+     Select whether to use extended characters.  extchars uses enhanced UTF-8
+characters for walls, doors, passages, stairs, the player, traps,
+and items.  noextchars uses Rogue's traditional map characters such as
+|, -, +, #, %, ., @, and item letters.  The default build uses extchars.
+cursor [nocursor]
+     Show the cursor during play.  When this option is off,
+the cursor is hidden during ordinary movement and restored
+when input is requested.  The default build uses nocursor.
+
+language [Japanese(J)/English(E)]
+     Change the display language.  Press J for Japanese or E
+for English.  When this is changed from the option screen,
+later messages and object display names are regenerated in
+the selected language.  User-entered names and call names
+are preserved as UTF-8 strings.
+
+file [PROGRAM.save]
+     The default file name for saving  the  game.   If  your
+     phone  is hung up by accident, rogue will automatically
+     save the game in this file.  The file  name  may  start
+     with the special character &quot;~&quot; which expands to be your
+     home directory.  Save files record the language used at
+     save time, but may be restored in either language.  Item
+     names are regenerated from internal IDs in the current
+     language.  Scroll titles are also stored as syllable IDs
+     and rebuilt with the syllables of the current language;
+     user-entered names and call names are kept as UTF-8
+     strings.
+
+9.  Scoring
+
+     Rogue keeps a list of the top scores on your machine.
+Each game can be recorded separately, so the same player may
+appear more than once.  The score file stores death and
+killer IDs rather than localized death text, so the list is
+displayed in the current runtime language.  If you score
+higher than someone else on this list, you will be inserted
+in the proper place under your current name.  How many
+scores are kept can also be set up by whoever installs it on
+your machine.
+
+     If you quit the game, you get out with all of your gold
+intact.   If,  however,  you  get  killed in the Dungeons of
+Doom, your body is forwarded to your next-of-kin, along with
+90%  of  your  gold; ten percent of your gold is kept by the
+Dungeons&#x27;  wizard  as a fee6.  This should make you consider
+whether you want to take one last hit at  that  monster  and
+possibly live, or quit and thus stop with whatever you have.
+If you quit, you do get all your gold, but if you swing  and
+live, you might find more.
+
+     If  you  just  want  to  see what the current top scores
+list is, you can type
+          % rogue -s
+
+10.  Acknowledgements
+
+     Rogue was originally conceived of by Glenn Wichman  and
+Michael  Toy.   Ken Arnold and Michael Toy then smoothed out
+the user interface, and added jillions of new features.   We
+would  like  to  thank  Bob  Arnold,  Michelle  Busch,  Andy
+Hatcher, Kipp Hickman, Mark Horton, Daniel Jensen, Bill Joy,
+Joe  Kalash,  Steve  Maurer,  Marty  McNary, Jan Miller, and
+Scott Nelson for their ideas and assistance;  and  also  the
+teeming  multitudes who graciously ignored work, school, and
+social life to play rogue and send us bugs, complaints, sug-
+gestions, and just plain flames.  And also Mom.
+
+
+
+____________________
+   6 The Dungeon&#x27;s wizard is named Wally the Wonder  Badger.
+Invocations should be accompanied by a sizable donation.
+
+
+
+
+
+
+
+
+</pre>
+<p style="font-size: 12px; color: #666;">Version-specific additions and revisions: leopardgecko. This guide accompanies Rogue DOS Tribute, a derivative inspired by DOS Rogue 1.48, not a direct port of its original source.</p>
+</body>
+</html>

@@ -1,0 +1,83 @@
+name: Build Rogue DOS Tribute (JEC.091)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unix:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-24.04, name: linux-x64 }
+          - { os: macos-15, name: macos-arm64 }
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Linux curses development libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libncurses-dev
+      - name: Build normal and original-language variants
+        run: |
+          set -eu
+          make
+          mkdir -p dist
+          cp rogue dist/rogue
+          make PROGRAM=rogue_original SAVEFILE=rogue.save SCOREFILE=rogue.scr LOCKFILE=rogue.lck original
+          cp rogue_original dist/rogue_original
+      - uses: actions/upload-artifact@v6
+        with:
+          name: rogue-dos-tribute-${{ matrix.name }}
+          path: dist/
+          if-no-files-found: error
+
+  windows:
+    name: windows-ucrt64-x64
+    runs-on: windows-2025
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      # Prevent Git's CRLF conversion from damaging shell scripts.
+      - name: Configure Git line endings
+        shell: pwsh
+        run: git config --global core.autocrlf input
+      - uses: actions/checkout@v6
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            make
+            zip
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-binutils
+            mingw-w64-ucrt-x86_64-pdcurses
+      - name: Build native Windows executable and package
+        run: |
+          set -eu
+          make
+          mkdir -p dist
+          cp rogue.exe dist/rogue.exe
+          make PROGRAM=rogue dist.win
+          cp rogue_dos_tribute_jec091_windows-rogue.zip dist/
+      - name: Build English-original and package
+        run: |
+          set -eu
+          make PROGRAM=rogue_original SAVEFILE=rogue.save SCOREFILE=rogue.scr LOCKFILE=rogue.lck original
+          cp rogue_original.exe dist/rogue_original.exe
+          make PROGRAM=rogue_original dist.win
+          cp rogue_dos_tribute_jec091_windows-rogue_original.zip dist/
+      - uses: actions/upload-artifact@v6
+        with:
+          name: rogue-dos-tribute-windows-ucrt64-x64
+          path: dist/
+          if-no-files-found: error
