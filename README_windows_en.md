@@ -26,6 +26,7 @@ Change the executable name with PROGRAM or PROG (PROGRAM takes precedence):
 
 The regular build selects its initial language from the Windows UI language,
 unless ROGUEOPTS contains language=ja or language=en. ROGUE_LANG is not used.
+DOS-style key bindings are the default; ROGUEOPTS=nodoskeys selects Rogue 5.4-based keys.
 
     make japanese       Japanese initial language
     make english        English initial language

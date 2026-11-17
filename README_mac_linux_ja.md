@@ -142,23 +142,12 @@ make original は、Rogue DOS Tribute のゲームルールとカラーなどの
 make japanese は標準のオプション既定値のまま、日本語を既定言語にします。
 configure では --default-language=auto、ja、en を指定できます。
 
-DOS版に近いキー操作はデフォルトで有効です。実行時に無効にする場合は、
-ROGUEOPTS で次のように指定します。
+DOS版風のキー操作は既定で有効です。ROGUEOPTS に nodoskeys を指定すると、
+Rogue 5.4系を基本とするキー操作に切り替わります。
 
     ROGUEOPTS=nodoskeys ./rogue
 
-DOS版風キー操作では、+ は投げる、- はつえ/魔法の棒、f は何かを見つけるまで進む
-接頭辞、g は拾わずに進む接頭辞、F はマクロの登録・変更、Ctrl-F は
-マクロ実行、Ctrl-R は最後のメッセージ再表示、Ctrl-T は簡潔表示の切り替え、
-Ctrl-L はDOS版風の画面確認メッセージになります。DOS版風キー操作では M と x は
-コマンドではありません。nodoskeys では M でマクロを登録・変更し、x で実行します。
-F1〜F10の
-変換と、矢印キー、Shift+矢印、Ctrl+矢印の代替入力にも対応します。
-このモードでは ! と F10 で fake DOS を開き、rogue と入力するか Esc を押すと
-ゲームに戻ります。
-
-デフォルトでは doskeys です。ROGUEOPTS=nodoskeys でDOS版風キー操作を
-無効にできます。表示言語も ROGUEOPTS の language=ja/en/auto で指定できます。
+キー操作の詳細は案内書、またはゲーム中の ? コマンドを参照してください。
 
 標準ビルドの既定値は、カラー表示、拡張文字、識別の巻き物を1種類にする
 設定を有効にし、通常プレイ中のカーソルを非表示にします。

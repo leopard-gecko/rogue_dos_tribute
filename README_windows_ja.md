@@ -27,6 +27,7 @@ MSYS2 の UCRT64 シェルを使用します。PDCursesMod の VT バックエ�
 
 初期表示言語は通常 OS のUI言語に従います。言語の指定には ROGUEOPTS の
 language=ja / language=en を使用します。ROGUE_LANG は使用しません。
+DOS版風のキー操作が既定です。ROGUEOPTS=nodoskeys でRogue 5.4系のキー操作に切り替わります。
 
     make japanese             （初期表示：日本語）
     make english              （初期表示：英語）

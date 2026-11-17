@@ -143,23 +143,12 @@ the default language.  make original selects English initially without changing
 the DOS 1.48 game rules or JEC color/option defaults.  configure accepts
 --default-language=auto, ja, or en.
 
-The DOS-style key bindings are enabled by default.  They can be disabled
-at runtime with ROGUEOPTS:
+DOS-style key bindings are enabled by default.  Set nodoskeys in ROGUEOPTS
+to use key bindings based on Rogue 5.4 instead.
 
     ROGUEOPTS=nodoskeys ./rogue
 
-With DOS-style key bindings, + throws, - zaps a staff or wand, f is the find/fast prefix,
-g is the move-without-picking-up prefix, F defines or changes the macro,
-Ctrl-F runs it, Ctrl-R repeats the last message, Ctrl-T toggles terse messages,
-and Ctrl-L prints the DOS-style screen-check message.  M and x are not commands
-in DOS-style key mode; with nodoskeys, M defines or changes the macro and x runs
-it.  F1 through F10 are translated, and arrow keys, Shift+arrow,
-and Ctrl+arrow are accepted as portable alternatives.  In this mode, ! and
-F10 open fake DOS; type rogue or press Esc to return to the game.
-
-The default is doskeys.  ROGUEOPTS=nodoskeys disables the DOS-style key
-bindings.  The display language can also be set with language=ja/en/auto in
-ROGUEOPTS.
+For details of the controls, see the guide or press ? during play.
 
 The standard build enables color, extended characters, one kind of identify scroll,
 and hides the cursor during ordinary play.
