@@ -835,5 +835,3 @@ Invocations should be accompanied by a sizable donation.
 
 
 Version-specific additions and revisions: leopardgecko.
-This guide accompanies Rogue DOS Tribute, a derivative inspired by
-DOS Rogue 1.48, not a direct port of its original source.
