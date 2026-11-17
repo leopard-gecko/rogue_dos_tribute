@@ -150,9 +150,6 @@ to use key bindings based on Rogue 5.4 instead.
 
 For details of the controls, see the guide or press ? during play.
 
-The standard build enables color, extended characters, one kind of identify scroll,
-and hides the cursor during ordinary play.
-
 ## Wizard mode
 
 To build with wizard mode enabled, use:
