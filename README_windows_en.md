@@ -21,8 +21,8 @@ VT backend; the former wincon backend is not supported.
 
 Change the executable name with PROGRAM or PROG (PROGRAM takes precedence):
 
-    make PROGRAM=rdt
-    make PROG=rdt
+    make PROGRAM=rogue-dos
+    make PROG=rogue-dos
 
 The regular build selects its initial language from the Windows UI language,
 unless ROGUEOPTS contains language=ja or language=en. ROGUE_LANG is not used.

@@ -78,8 +78,8 @@ Local settings can be supplied on the make command line, for example:
 
 Common configure examples are:
 
-    ./configure --program=rdt
-    ./configure --prefix=/usr --program=rdt
+    ./configure --program=rogue-dos
+    ./configure --prefix=/usr --program=rogue-dos
     ./configure --default-language=ja
     ./configure --ja-man-style=mac
     ./configure --with-curses-libs="-lncursesw"
@@ -180,29 +180,29 @@ overridden explicitly.
 
 Examples:
 
-    make PROGRAM=rdt
-    make PROG=rdt
+    make PROGRAM=rogue-dos
+    make PROG=rogue-dos
 
 With configure, use --program:
 
-    ./configure --program=rdt
+    ./configure --program=rogue-dos
 
-These build the executable as rdt and use these play-time data files:
+These build the executable as rogue-dos and use these play-time data files:
 
-    rdt.save
-    rdt.scr
-    rdt.lck
+    rogue-dos.save
+    rogue-dos.scr
+    rogue-dos.lck
 
 To place all three data files in the same directory, use FILEDIR or
 --file-dir.  When FILEDIR is set, make install creates that directory
 automatically.
 
-    make PROGRAM=rdt FILEDIR=$HOME/.local/share/rogue
-    make PROGRAM=rdt FILEDIR=$HOME/.local/share/rogue install
+    make PROGRAM=rogue-dos FILEDIR=$HOME/.local/share/rogue
+    make PROGRAM=rogue-dos FILEDIR=$HOME/.local/share/rogue install
 
 With configure, use:
 
-    ./configure --program=rdt --file-dir=$HOME/.local/share/rogue
+    ./configure --program=rogue-dos --file-dir=$HOME/.local/share/rogue
     make
     make install
 
@@ -211,15 +211,15 @@ the specified directory first.
 
 These use:
 
-    ~/.local/share/rogue/rdt.save
-    ~/.local/share/rogue/rdt.scr
-    ~/.local/share/rogue/rdt.lck
+    ~/.local/share/rogue/rogue-dos.save
+    ~/.local/share/rogue/rogue-dos.scr
+    ~/.local/share/rogue/rogue-dos.lck
 
 The file names can also be overridden individually.  Individual file names
 take precedence over FILEDIR.
 
-    make PROGRAM=rdt SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
-    ./configure --program=rdt --save-file=my.save --score-file=my.scr --lock-file=my.lck
+    make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
+    ./configure --program=rogue-dos --save-file=my.save --score-file=my.scr --lock-file=my.lck
 
 ## Install
 
@@ -234,7 +234,7 @@ DESTDIR and prefix are supported for packaging or local staging, for example:
 
 With configure, install paths can be saved in config.mk first:
 
-    ./configure --prefix=/usr --program=rdt
+    ./configure --prefix=/usr --program=rogue-dos
     make
     make install DESTDIR=/tmp/rogue-stage
 

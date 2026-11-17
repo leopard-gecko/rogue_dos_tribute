@@ -66,8 +66,8 @@ Environment:
 
 Examples:
   ./configure
-  ./configure --program=rdt
-  ./configure --prefix=/usr --program=rdt --default-language=ja
+  ./configure --program=rogue-dos
+  ./configure --prefix=/usr --program=rogue-dos --default-language=ja
   make
 USAGE
 }

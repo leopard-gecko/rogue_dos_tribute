@@ -78,8 +78,8 @@ config.mk は Makefile から自動的に読み込まれます。
 
 configure を使う場合は、代表的には以下のように指定できます。
 
-    ./configure --program=rdt
-    ./configure --prefix=/usr --program=rdt
+    ./configure --program=rogue-dos
+    ./configure --prefix=/usr --program=rogue-dos
     ./configure --default-language=ja
     ./configure --ja-man-style=mac
     ./configure --with-curses-libs="-lncursesw"
@@ -179,30 +179,30 @@ PROG を同時に指定した場合は PROGRAM が優先されます。既定で
 
 例:
 
-    make PROGRAM=rdt
-    make PROG=rdt
+    make PROGRAM=rogue-dos
+    make PROG=rogue-dos
 
 configure を使う場合は、--program を使用します。
 
-    ./configure --program=rdt
+    ./configure --program=rogue-dos
 
-この場合、実行ファイルは rdt として作られ、プレイ時のデータファイルは
+この場合、実行ファイルは rogue-dos として作られ、プレイ時のデータファイルは
 以下になります。
 
-    rdt.save
-    rdt.scr
-    rdt.lck
+    rogue-dos.save
+    rogue-dos.scr
+    rogue-dos.lck
 
 3つのデータファイルを同じディレクトリに置く場合は、FILEDIR または
 --file-dir を指定します。FILEDIR が指定されている場合、make install は
 指定されたディレクトリを自動的に作成します。
 
-    make PROGRAM=rdt FILEDIR=$HOME/.local/share/rogue
-    make PROGRAM=rdt FILEDIR=$HOME/.local/share/rogue install
+    make PROGRAM=rogue-dos FILEDIR=$HOME/.local/share/rogue
+    make PROGRAM=rogue-dos FILEDIR=$HOME/.local/share/rogue install
 
 configure を使う場合は以下のように指定します。
 
-    ./configure --program=rdt --file-dir=$HOME/.local/share/rogue
+    ./configure --program=rogue-dos --file-dir=$HOME/.local/share/rogue
     make
     make install
 
@@ -211,14 +211,14 @@ configure を使う場合は以下のように指定します。
 
 この場合、データファイルは以下になります。
 
-    ~/.local/share/rogue/rdt.save
-    ~/.local/share/rogue/rdt.scr
-    ~/.local/share/rogue/rdt.lck
+    ~/.local/share/rogue/rogue-dos.save
+    ~/.local/share/rogue/rogue-dos.scr
+    ~/.local/share/rogue/rogue-dos.lck
 
 ファイル名を個別に指定することもできます。個別指定は FILEDIR より優先されます。
 
-    make PROGRAM=rdt SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
-    ./configure --program=rdt --save-file=my.save --score-file=my.scr --lock-file=my.lck
+    make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
+    ./configure --program=rogue-dos --save-file=my.save --score-file=my.scr --lock-file=my.lck
 
 ## インストール
 
@@ -234,7 +234,7 @@ prefix を使用できます。例:
 
 configure を使う場合は、インストール先を先に config.mk に保存できます。
 
-    ./configure --prefix=/usr --program=rdt
+    ./configure --prefix=/usr --program=rogue-dos
     make
     make install DESTDIR=/tmp/rogue-stage
 

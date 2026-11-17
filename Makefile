@@ -90,10 +90,10 @@ endif
 # Individual SAVEFILE, SCOREFILE, and LOCKFILE settings still take precedence.
 # PROG is accepted as a short alias used by the other Rogue ports.
 # If both PROGRAM and PROG are specified, PROGRAM takes precedence.
-# For example, make PROGRAM=rdt or make PROG=rdt builds rdt
-# and uses rdt.save, rdt.scr, and rdt.lck by default.
-# make PROGRAM=rdt FILEDIR=/var/games/rogue uses
-# /var/games/rogue/rdt.save, rdt.scr, and rdt.lck.
+# For example, make PROGRAM=rogue-dos or make PROG=rogue-dos builds rogue-dos
+# and uses rogue-dos.save, rogue-dos.scr, and rogue-dos.lck by default.
+# make PROGRAM=rogue-dos FILEDIR=/var/games/rogue uses
+# /var/games/rogue/rogue-dos.save, rogue-dos.scr, and rogue-dos.lck.
 
 # Keep the built-in flags even when the user passes CPPFLAGS on the
 # command line.  Use EXTRA_CPPFLAGS for local additions such as -DMASTER.

@@ -22,8 +22,8 @@ MSYS2 の UCRT64 シェルを使用します。PDCursesMod の VT バックエ�
 
 実行ファイル名を変更できます（PROGRAM が PROG より優先されます）。
 
-    make PROGRAM=rdt
-    make PROG=rdt
+    make PROGRAM=rogue-dos
+    make PROG=rogue-dos
 
 初期表示言語は通常 OS のUI言語に従います。言語の指定には ROGUEOPTS の
 language=ja / language=en を使用します。ROGUE_LANG は使用しません。
