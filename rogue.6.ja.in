@@ -18,7 +18,7 @@
 .RB [ \-s ]
 .SH DESCRIPTION
 .PP
-Rogue DOS TributeはRogue 5.4系のソースを基盤に、Epyx社のDOS版
+Rogue DOS TributeはRogue 5.4系のソースを基盤に、DOS版
 Rogue 1.48を参考に再構成した派生版です。DOS 1.48の原典ソース
 をそのまま移植したものではありません。
 .PP

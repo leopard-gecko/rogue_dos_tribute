@@ -141,10 +141,10 @@ include sources.mk
 HDRS     = $(ROGUE_COMMON_HEADERS)
 CFILES   = $(ROGUE_COMMON_CFILES)
 OBJS     = $(CFILES:.c=.$(O))
-DOCS     = README.md README_ja.txt README_en.txt rogue_ja.txt rogue_en.txt \
+DOCS     = README.md README_mac_linux_ja.md README_mac_linux_en.md rogue_ja.txt rogue_en.txt \
            rogue_ja.html rogue_en.html $(MANPAGES)
-AFILES   = README.md README_ja.txt README_en.txt \
-           README_windows_ja.txt README_windows_en.txt \
+AFILES   = README.md README_mac_linux_ja.md README_mac_linux_en.md \
+           README_windows_ja.md README_windows_en.md \
            rogue_ja.txt rogue_en.txt rogue_ja.html rogue_en.html \
            Makefile Makefile.win sources.mk configure \
            rogue.6.en.in rogue.6.ja.in .github/workflows/build.yml \
@@ -259,8 +259,8 @@ endif
 	    $(MKDIR) $(DESTDIR)$$d; \
 	    $(INSTALL) -m 0644 $(MANPAGE_JA) $(DESTDIR)$$d/$(PROGRAM).6; \
 	done
-	$(INSTALL) -m 0644 README_ja.txt $(DESTDIR)$(docdir)/README_ja.txt
-	$(INSTALL) -m 0644 README_en.txt $(DESTDIR)$(docdir)/README_en.txt
+	$(INSTALL) -m 0644 README_mac_linux_ja.md $(DESTDIR)$(docdir)/README_mac_linux_ja.md
+	$(INSTALL) -m 0644 README_mac_linux_en.md $(DESTDIR)$(docdir)/README_mac_linux_en.md
 	$(INSTALL) -m 0644 rogue_ja.txt $(DESTDIR)$(docdir)/rogue_ja.txt
 	$(INSTALL) -m 0644 rogue_en.txt $(DESTDIR)$(docdir)/rogue_en.txt
 	$(INSTALL) -m 0644 rogue_ja.html $(DESTDIR)$(docdir)/rogue_ja.html
@@ -278,8 +278,8 @@ uninstall:
 	        $(RMDIR) $(DESTDIR)$$parent 2>/dev/null || true; \
 	    fi; \
 	done
-	-$(RM) $(DESTDIR)$(docdir)/README_ja.txt
-	-$(RM) $(DESTDIR)$(docdir)/README_en.txt
+	-$(RM) $(DESTDIR)$(docdir)/README_mac_linux_ja.md
+	-$(RM) $(DESTDIR)$(docdir)/README_mac_linux_en.md
 	-$(RM) $(DESTDIR)$(docdir)/rogue_ja.txt
 	-$(RM) $(DESTDIR)$(docdir)/rogue_en.txt
 	-$(RM) $(DESTDIR)$(docdir)/rogue_ja.html

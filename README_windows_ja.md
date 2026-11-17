@@ -1,14 +1,12 @@
-Rogue DOS Tribute JEC.091 — Windows版README
-=====================================
+# Rogue DOS Tribute JEC.091 — Windows版README
 
 この文書は、Windows 10 / 11（64ビット）でのビルド・起動・配布について説明します。
 本作は5.4系のコードを基盤にDOS版Rogue 1.48を参考にして再構成した派生版で、
 DOS 1.48の原典ソースを直接移植したものではありません。
 ゲームの操作やアイテムについては rogue_ja.html / rogue_ja.txt を参照してください。
-macOS / Linuxでのビルドは README_ja.txt を参照してください。
+macOS / Linuxでのビルドは README_mac_linux_ja.md を参照してください。
 
-必要な環境
-----------
+## 必要な環境
 
 MSYS2 の UCRT64 シェルを使用します。PDCursesMod の VT バックエンドのみを使用し、
 従来の wincon バックエンドへの切り替えには対応していません。
@@ -16,8 +14,7 @@ MSYS2 の UCRT64 シェルを使用します。PDCursesMod の VT バックエ�
     pacman -S --needed make zip mingw-w64-ucrt-x86_64-gcc \
         mingw-w64-ucrt-x86_64-binutils mingw-w64-ucrt-x86_64-pdcurses
 
-ビルド
-------
+## ビルド
 
     make clean
     make
@@ -45,8 +42,7 @@ make PROGRAM=名前 を指定してください。標準のファイル名もそ
 FILEDIR に保存先を指定できます。ディレクトリは実行前に作成してください。
 日本語を含むパスもUTF-8の設定とWindows Unicode APIに対応しています。
 
-起動と画面
-----------
+## 起動と画面
 
 エクスプローラーからEXEをダブルクリックすると、専用のコンソールを
 80×24文字に自動調整します。既存のcmd、PowerShell、UCRT64などの
@@ -70,8 +66,7 @@ FILEDIR に保存先を指定できます。ディレクトリは実行前に作
 検証時には必ずコピーを保存してください。ゲーム中の文字列入力では、日本語と
 単独絵文字を使用できますが、複合絵文字の表示は端末に依存します。
 
-Windows用配布ZIP
------------------
+## Windows用配布ZIP
 
 MSYS2 UCRT64で通常版をビルドした後、次のコマンドで配布ZIPを作成できます。
 
@@ -92,8 +87,7 @@ DLLやテスト用ファイルは同梱しません。ZIP作成にはMSYS2のzip
 ソース配布用アーカイブは `make dist.src` で作成できます。
 アイコンは実行ファイルに埋め込まれます。
 
-GitHub Actionsによるビルド確認
-----------------------------
+## GitHub Actionsによるビルド確認
 
 GitHubリポジトリの .github/workflows/build.yml は、push・pull request・手動実行で
 Linux、macOS、Windows UCRT64の各ビルドを確認します。通常版と初期言語英語の

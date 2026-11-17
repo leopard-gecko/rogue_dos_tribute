@@ -1,17 +1,16 @@
-Rogue DOS Tribute JEC.091
+# Rogue DOS Tribute JEC.091
 
 このソースツリーは、単一の実行ファイル "rogue" をビルドします。
-Windows 10/11 用のビルド・起動・配布方法は README_windows_ja.txt に
+Windows 10/11 用のビルド・起動・配布方法は README_windows_ja.md に
 まとめています。以下のビルド・インストール手順は macOS / Linux 用です。
 
 Rogue DOS Tributeは、Rogue 5.4系（Rogue 5.4.5 JECの移植基盤を含む）の
-ソースコードを出発点に、Epyx社のDOS版Rogue 1.48を参考として、
+ソースコードを出発点に、DOS版Rogue 1.48を参考として、
 怪物・アイテム・ゲームルール・キー操作・演出を再構成した独立した派生版です。
 オリジナルのDOS版Rogue 1.48のソースをそのまま移植したものではありません。
 日本語・英語の切り替え、カラー表示、macOS・Linux・Windowsへの対応を含みます。
 
-ビルド
-------
+## ビルド
 
 このソースツリーは、同梱されている Makefile をそのまま使用できます。
 また、Linux などで環境に合わせた設定を先に行いたい場合のために、
@@ -90,8 +89,7 @@ configure で作成された config.mk と config.log を削除するには、�
 
     make distclean
 
-配布アーカイブ
---------------
+## 配布アーカイブ
 
 配布用のターゲットは2種類あります。
 
@@ -107,8 +105,7 @@ configure で作成された config.mk と config.log を削除するには、�
 rogue_dos_tribute_jec091.tar.gz を作成します。実行ファイル、ライセンス、README、
 案内書、HTML案内書、生成済み man ページが含まれます。
 
-言語選択
---------
+## 言語選択
 
 ゲームの表示言語は、起動時には ROGUEOPTS の language で指定できます。
 
@@ -166,15 +163,13 @@ F1〜F10の
 標準ビルドの既定値は、カラー表示、拡張文字、識別の巻き物を1種類にする
 設定を有効にし、通常プレイ中のカーソルを非表示にします。
 
-ウィザードモード
-----------------
+## ウィザードモード
 
 ウィザードモードを有効にしてビルドする場合は、以下を使用します。
 
     make wizard
 
-プログラム名とデータファイル名
-------------------------------
+## プログラム名とデータファイル名
 
 実行ファイル名は、ビルド時に PROGRAM で変更できます。Clone III などの
 他の移植版と同じように、PROG も別名として使えます。PROGRAM と
@@ -225,8 +220,7 @@ configure を使う場合は以下のように指定します。
     make PROGRAM=rdt SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
     ./configure --program=rdt --save-file=my.save --score-file=my.scr --lock-file=my.lck
 
-インストール
-------------
+## インストール
 
 インストールは任意です。実行ファイル、英語版／日本語版のマニュアルページ、同梱文書を
 /usr/local 以下にインストールするには、以下を使用します。
@@ -258,8 +252,7 @@ make install は *.scr、*.lck、*.save ファイルを作成・インストー�
 自動的に作成します。*.scr、*.lck、*.save はプレイ時のデータファイルであり、
 実行時のセーブファイル／スコアファイル設定に従ってゲームが作成・使用します。
 
-ファイル
---------
+## ファイル
 
 標準のセーブファイル:
 
@@ -273,8 +266,7 @@ make install は *.scr、*.lck、*.save ファイルを作成・インストー�
 
     $(PROGRAM).lck、通常は rogue.lck
 
-文書
-----
+## 文書
 
 ソースツリーには、以下のユーザー向け文書が含まれています。
 
@@ -282,30 +274,29 @@ make install は *.scr、*.lck、*.save ファイルを作成・インストー�
     rogue_en.txt     このソースに合わせて更新した英語プレーンテキスト解説書
     rogue_ja.html    日本語 HTML 解説書
     rogue_en.html    英語 HTML 解説書
-    README_windows_ja.txt  Windows版ビルド・起動・配布案内（日本語）
-    README_windows_en.txt  Windows版ビルド・起動・配布案内（英語）
+    README_windows_ja.md  Windows版ビルド・起動・配布案内（日本語）
+    README_windows_en.md  Windows版ビルド・起動・配布案内（英語）
     rogue.6.en.in    英語版 man ページのテンプレート
     rogue.6.ja.in    日本語版 man ページのテンプレート
 
-README_ja.txt は、ビルド、パッケージング、実行時の言語切り替えに関する
-日本語の説明です。英語版は README_en.txt に分けています。
+README_mac_linux_ja.md は、ビルド、パッケージング、実行時の言語切り替えに関する
+日本語の説明です。英語版は README_mac_linux_en.md に分けています。
 
-この移植版の主な特徴
---------------------
+## この移植版の主な特徴
 
 Rogue DOS Tributeでは、Rogue 5.4.5 JEC由来の移植・表示基盤を使いながら、
 ゲームデータと一部のルールをDOS版Rogue 1.48に近づけています。
 
-    ・UTF-8 の日本語／英語表示に対応し、実行時に表示言語を切り替え可能にした
-    ・macOS と一般的な Linux で使いやすい Makefile ベースのビルド方式に整理し、軽量な configure を追加した
-    ・標準ビルドでカラー表示、識別の巻き物1種類化、通常プレイ中のカーソル非表示を既定にした
-    ・拡張文字の使用を extchars / noextchars で切り替えられるようにした
-    ・通路や迷路をDOS版風に表示し、通路上のプレイヤーには専用色を使うようにした
-    ・水薬を怪物に投げた時の特殊効果を追加した
-    ・水薬表を DOS版風にし、paralysis と thirst quenching を追加した
-    ・識別の巻き物を1種類にし、blank paper と vorpalize weapon を追加した
-    ・Ice Monster の frost 攻撃と slime の分裂を追加した
-    ・striking のつえ/魔法の棒、crossbow、crossbow bolt を追加した
-    ・怪物名、能力値、フラグ、出現テーブルを DOS版 Rogue 1.48 風に調整した
-    ・PROGRAM 指定により、実行ファイル名と標準のセーブ／スコア／ロックファイル名を連動して変更できるようにした
-    ・日本語版／英語版の解説文書と man ページの内容を、このソースの仕様に合わせて整理した
+- UTF-8 の日本語／英語表示に対応し、実行時に表示言語を切り替え可能にした
+- macOS と一般的な Linux で使いやすい Makefile ベースのビルド方式に整理し、軽量な configure を追加した
+- 標準ビルドでカラー表示、識別の巻き物1種類化、通常プレイ中のカーソル非表示を既定にした
+- 拡張文字の使用を extchars / noextchars で切り替えられるようにした
+- 通路や迷路をDOS版風に表示し、通路上のプレイヤーには専用色を使うようにした
+- 水薬を怪物に投げた時の特殊効果を追加した
+- 水薬表を DOS版風にし、paralysis と thirst quenching を追加した
+- 識別の巻き物を1種類にし、blank paper と vorpalize weapon を追加した
+- Ice Monster の frost 攻撃と slime の分裂を追加した
+- striking のつえ/魔法の棒、crossbow、crossbow bolt を追加した
+- 怪物名、能力値、フラグ、出現テーブルを DOS版 Rogue 1.48 風に調整した
+- PROGRAM 指定により、実行ファイル名と標準のセーブ／スコア／ロックファイル名を連動して変更できるようにした
+- 日本語版／英語版の解説文書と man ページの内容を、このソースの仕様に合わせて整理した

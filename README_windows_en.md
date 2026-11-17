@@ -1,13 +1,11 @@
-Rogue DOS Tribute JEC.091 — Windows README
-=========================================
+# Rogue DOS Tribute JEC.091 — Windows README
 
 These instructions are for 64-bit Windows 10/11. Rogue DOS Tribute is a derivative
-based on the Rogue 5.4 family and inspired by Epyx DOS Rogue 1.48; it is
+based on the Rogue 5.4 family and inspired by DOS Rogue 1.48; it is
 not a direct port of the original DOS 1.48 source. For game controls and items,
-see rogue_en.html or rogue_en.txt. For macOS/Linux builds, see README_en.txt.
+see rogue_en.html or rogue_en.txt. For macOS/Linux builds, see README_mac_linux_en.md.
 
-Prerequisites
--------------
+## Prerequisites
 
 Use the MSYS2 UCRT64 shell. The Windows build always uses the PDCursesMod
 VT backend; the former wincon backend is not supported.
@@ -15,8 +13,7 @@ VT backend; the former wincon backend is not supported.
     pacman -S --needed make zip mingw-w64-ucrt-x86_64-gcc \
         mingw-w64-ucrt-x86_64-binutils mingw-w64-ucrt-x86_64-pdcurses
 
-Build and run
--------------
+## Build and run
 
     make clean
     make
@@ -40,8 +37,7 @@ files. PROGRAM also determines their default names. Use FILEDIR=games to
 specify a data directory; create that directory before launching the game.
 Windows Unicode file operations support Japanese paths.
 
-Startup and display
--------------------
+## Startup and display
 
 A direct Explorer launch requests an 80x24 private console. Launching from
 an existing cmd, PowerShell or UCRT64 session does not resize that terminal.
@@ -63,8 +59,7 @@ Restoring a game normally consumes (deletes) its save file: back it up before
 testing. Ordinary Japanese input and standalone emoji are supported; complex
 emoji sequences depend on the terminal and font.
 
-Windows distribution ZIP
-------------------------
+## Windows distribution ZIP
 
 After building the Windows executable in MSYS2 UCRT64, create a ZIP with:
 
@@ -82,8 +77,7 @@ extra DLLs is generally unnecessary. Before releasing, also test the EXE on
 Windows 10/11 without MSYS2 installed. The Windows icon is embedded in the
 EXE; use `make dist.src` for a source archive.
 
-GitHub Actions build verification
----------------------------------
+## GitHub Actions build verification
 
 The .github/workflows/build.yml workflow runs on push, pull requests, and
 manual dispatch. It builds the normal and initially-English (make original)

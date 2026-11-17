@@ -98,7 +98,7 @@ Rogue DOS Tribute (JEC.091) — project notes
 ------------------------------------------
 Rogue DOS Tribute is a modified Rogue derivative based on the Rogue 5.4
 family and the Rogue 5.4.5 JEC porting framework. The game rules,
-controls, and presentation have been modified with reference to Epyx DOS
+controls, and presentation have been modified with reference to DOS
 Rogue 1.48. This is not a direct port of the DOS 1.48 source code.
 
 The JEC-specific changes include Japanese/English display, Unicode text
