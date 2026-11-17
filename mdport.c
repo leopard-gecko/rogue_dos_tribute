@@ -50,6 +50,8 @@
 #endif
 
 #include <curses.h> /* AIX requires curses.h be included before term.h. */
+/* extern.h disables SIGTSTP; include signal.h before that definition. */
+#include <signal.h>
 #include "extern.h"
 #ifdef _WIN32
 #include "windows/rogue_windows.h"
@@ -105,7 +107,6 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#include <signal.h>
 
 #if !defined(PATH_MAX) && defined(_MAX_PATH)
 #define PATH_MAX _MAX_PATH
