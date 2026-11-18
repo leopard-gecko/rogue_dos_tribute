@@ -1,47 +1,122 @@
 # Rogue DOS Tribute JEC.091 — Windows版README
 
-この文書は、Windows 10 / 11（64ビット）でのビルド・起動・配布について説明します。
-本作は5.4系のコードを基盤にDOS版Rogue 1.48を参考にして再構成した派生版で、
-DOS 1.48の原典ソースを直接移植したものではありません。
-ゲームの操作やアイテムについては rogue_ja.html / rogue_ja.txt を参照してください。
-macOS / Linuxでのビルドは README_mac_linux_ja.md を参照してください。
+このソースツリーは、Windows 10 / 11（64ビット）用の実行ファイル `rogue.exe` をビルドします。
+macOS / Linuxでのビルド・インストール手順は `README_mac_linux_ja.md` にまとめています。
 
-## 必要な環境
-
-MSYS2 の UCRT64 シェルを使用します。PDCursesMod の VT バックエンドのみを使用し、
-従来の wincon バックエンドへの切り替えには対応していません。
-
-    pacman -S --needed make zip mingw-w64-ucrt-x86_64-gcc \
-        mingw-w64-ucrt-x86_64-binutils mingw-w64-ucrt-x86_64-pdcurses
+Rogue DOS Tributeは、Rogue 5.4系（Rogue 5.4.5 JECの移植基盤を含む）の
+ソースコードを出発点に、DOS版Rogue 1.48を参考として、
+怪物・アイテム・ゲームルール・キー操作・演出を再構成した独立した派生版です。
+オリジナルのDOS版Rogue 1.48のソースをそのまま移植したものではありません。
+日本語・英語の切り替え、カラー表示、macOS・Linux・Windowsへの対応を含みます。
 
 ## ビルド
 
-    make clean
+WindowsではMSYS2の **UCRT64** シェルを使用します。MSYS2をインストールし、
+UCRT64シェルで次の開発用パッケージをインストールしてください。
+
+    pacman -S --needed make mingw-w64-ucrt-x86_64-gcc \
+        mingw-w64-ucrt-x86_64-binutils mingw-w64-ucrt-x86_64-pdcurses
+
+通常は、ソースツリーのディレクトリで以下だけでビルドできます。
+
     make
+
+標準の実行ファイルは次の場所に作成されます。
+
     ./rogue.exe
 
-実行ファイル名を変更できます（PROGRAM が PROG より優先されます）。
+起動するには次を実行します。
+
+    ./rogue.exe
+
+標準ビルドでは、カラー表示などを有効にした次のオプション既定値を使用します。
+
+    color
+    extchars
+    nocursor
+
+必要に応じて、コンパイラなどをmakeのコマンドラインから指定できます。
+
+    make CC=gcc
+    make CFLAGS="-O2"
+
+ビルドしたオブジェクトを削除して作り直すには、以下を使用します。
+
+    make clean
+    make
+
+## 言語選択
+
+ゲームの表示言語は、起動時には環境変数 `ROGUEOPTS` の `language` で指定できます。
+UCRT64シェルでの例：
+
+    ROGUEOPTS=language=ja ./rogue.exe
+    ROGUEOPTS=language=en ./rogue.exe
+    ROGUEOPTS=language=auto ./rogue.exe
+
+`language=ja` は日本語、`language=en` は英語、`language=auto` はOSの
+言語設定による自動判定を指定します。`auto` は初期言語の決定にのみ使用し、
+ゲーム中のオプションには表示されません。プレイ中はオプション画面の
+`language` で、日本語は `J`、英語は `E` を押して切り替えます。
+名前や呼び名などの入力文字列はUTF-8として保持されます。
+
+起動時は `ROGUEOPTS` の `language=ja/en/auto` がビルド時の既定値より
+優先されます。通常の `make` の初期設定は `auto` で、Windowsでは
+ユーザーのUI言語を参照します。
+
+`ROGUEOPTS` は起動時に一度だけ読み込みます。新しいゲームでは
+`terse/noterse`、`jump/nojump` を初期設定に使い、セーブからの再開時は
+保存済みの `terse`、`jump` の値が優先されます。表示言語は起動時に決まり、
+ゲーム中にも変更できます。
+
+OSの言語設定によらず初期言語を固定する場合は、以下を使用します。
+
+    make japanese
+    make english
+    make original
+
+`make japanese` は日本語、`make english` は英語を初期表示にします。
+`make original` は、ゲームルールやカラーなどの既定値を変えず、
+初期表示言語を英語にします。
+
+DOS版風のキー操作は既定で有効です。`ROGUEOPTS` に `nodoskeys` を指定すると
+Rogue 5.4系を基本とするキー操作に切り替わります。
+
+    ROGUEOPTS=nodoskeys ./rogue.exe
+
+キー操作の詳細は案内書、またはゲーム中の `?` コマンドを参照してください。
+
+## ウィザードモード
+
+ウィザードモードを有効にしてビルドするには、次を使用します。
+
+    make wizard
+
+## プログラム名とデータファイル名
+
+実行ファイル名は、ビルド時に `PROGRAM` で変更できます。`PROG` も別名として
+使用でき、同時に指定した場合は `PROGRAM` が優先されます。既定では、
+セーブ・スコア・ロックファイル名も実行ファイル名に連動します。
 
     make PROGRAM=rogue-dos
     make PROG=rogue-dos
 
-初期表示言語は通常 OS のUI言語に従います。言語の指定には ROGUEOPTS の
-language=ja / language=en を使用します。ROGUE_LANG は使用しません。
-DOS版風のキー操作が既定です。ROGUEOPTS=nodoskeys でRogue 5.4系のキー操作に切り替わります。
+この場合、実行ファイルは `rogue-dos.exe`、データファイルは次の名前になります。
 
-    make japanese             （初期表示：日本語）
-    make english              （初期表示：英語）
-    make original             （初期表示：英語。ゲーム内容・色設定は通常版と同じ）
-    make wizard               （ウィザード機能をビルド）
+    rogue-dos.save
+    rogue-dos.scr
+    rogue-dos.lck
 
-上記のビルド切り替えは内部の .win.o を作り直します。既存のセーブ、スコア、
-ロックファイルを削除しません。独立した実行ファイルを作る場合は
-make PROGRAM=名前 を指定してください。標準のファイル名もその名前に連動します。
+データファイルの保存先ディレクトリを指定するには `FILEDIR` を使います。
 
-    make FILEDIR=games
+    make PROGRAM=rogue-dos FILEDIR=games
 
-FILEDIR に保存先を指定できます。ディレクトリは実行前に作成してください。
-日本語を含むパスもUTF-8の設定とWindows Unicode APIに対応しています。
+インストールせずに直接起動するときは、指定したディレクトリをあらかじめ
+作成してください。日本語を含むファイルパスはWindowsのUnicode APIで扱います。
+
+ファイル名は個別にも指定でき、個別指定は `FILEDIR` より優先されます。
+
+    make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
 
 ## 起動と画面
 
@@ -56,7 +131,7 @@ FILEDIR に保存先を指定できます。ディレクトリは実行前に作
     F            別のセーブファイルを選択
     Q            終了
 
-標準セーブがない場合は新規ゲームを開始します。セーブファイルをEXEへ
+標準セーブがない場合は新規ゲームを開始します。セーブファイルをEXEに
 ドラッグ＆ドロップして再開することもできます。
 
     ./rogue.exe -s           スコア表示
@@ -64,37 +139,53 @@ FILEDIR に保存先を指定できます。ディレクトリは実行前に作
     ./rogue.exe '冒険.save'  指定ファイルから再開
 
 セーブから再開すると、原則として元のセーブファイルは消費（削除）されます。
-検証時には必ずコピーを保存してください。ゲーム中の文字列入力では、日本語と
-単独絵文字を使用できますが、複合絵文字の表示は端末に依存します。
+検証時にはコピーを保存してください。文字列入力では日本語や単独絵文字が
+使用できますが、複合絵文字の表示は端末やフォントに依存します。
 
-## Windows用配布ZIP
+## ファイル
 
-MSYS2 UCRT64で通常版をビルドした後、次のコマンドで配布ZIPを作成できます。
+標準のセーブファイル：
 
-    make dist.win
+    $(PROGRAM).save、通常は rogue.save
 
-「rogue_dos_tribute_jec091_windows-rogue.zip」には、実行ファイル、
-Windows用の日英README、日英案内書（HTML・テキスト）、LICENSE.TXTが入ります。
-DLLやテスト用ファイルは同梱しません。ZIP作成にはMSYS2のzipが必要です。
+標準のスコアファイル：
 
-    pacman -S --needed zip
+    $(PROGRAM).scr、通常は rogue.scr
 
-外部DLLの依存関係を調べる場合は、必要に応じて次を実行してください。
+標準のロックファイル：
 
-    ldd rogue.exe
+    $(PROGRAM).lck、通常は rogue.lck
 
-参照先がすべてWindows標準のSystem32のDLLであれば、追加DLLの同梱は通常不要です。
-ただし配布前には、MSYS2が入っていないWindows 10/11上でも起動を確認してください。
-ソース配布用アーカイブは `make dist.src` で作成できます。
-アイコンは実行ファイルに埋め込まれます。
+## 文書
 
-## GitHub Actionsによるビルド確認
+ソースツリーには以下のユーザー向け文書が含まれています。
 
-GitHubリポジトリの .github/workflows/build.yml は、push・pull request・手動実行で
-Linux、macOS、Windows UCRT64の各ビルドを確認します。通常版と初期言語英語の
-make original を別々にビルドし、実行ファイルとWindows配布ZIPを成果物として保存します。
+    rogue_ja.txt            日本語プレーンテキスト解説書
+    rogue_en.txt            英語プレーンテキスト解説書
+    rogue_ja.html           日本語HTML解説書
+    rogue_en.html           英語HTML解説書
+    README_mac_linux_ja.md  macOS / Linux向けREADME（日本語）
+    README_mac_linux_en.md  macOS / Linux向けREADME（英語）
+    rogue.6.en.in           英語版manページのテンプレート
+    rogue.6.ja.in           日本語版manページのテンプレート
 
-Actionsの成果物はビルド確認用です。配布前にはWindows Terminal/ConsoleHostでの
-カーテン・墓標・階層移動・日本語セーブ再開を実機確認してください。
-Windows版が別PCでも起動することはビルドだけでは保証されません。
-Windows標準以外のDLLへの依存がないことも確認してください。
+ゲームの操作やアイテムの詳細は案内書を参照してください。
+
+## この移植版の主な特徴
+
+Rogue DOS Tributeでは、Rogue 5.4.5 JEC由来の移植・表示基盤を使いながら、
+ゲームデータと一部のルールをDOS版Rogue 1.48に近づけています。
+
+- UTF-8の日本語／英語表示と、ゲーム中の表示言語切り替え
+- Windows 10 / 11向けのMSYS2 UCRT64ビルドへの対応
+- 標準ビルドでカラー表示、識別の巻き物1種類化、通常プレイ中のカーソル非表示を既定にした
+- `extchars / noextchars` による拡張文字の切り替え
+- DOS版風の通路・迷路表示と通路上のプレイヤー専用色
+- 水薬を怪物に投げた際の特殊効果
+- DOS版風の水薬表と `paralysis`、`thirst quenching` の追加
+- 識別の巻き物の1種類化と `blank paper`、`vorpalize weapon` の追加
+- Ice Monsterのfrost攻撃とslimeの分裂
+- strikingのつえ／魔法の棒、crossbow、crossbow boltの追加
+- 怪物名・能力値・フラグ・出現テーブルのDOS版Rogue 1.48風への調整
+- `PROGRAM` 指定に連動した実行ファイル名と標準データファイル名
+- このソースの仕様に合わせた日英の案内書・manページ

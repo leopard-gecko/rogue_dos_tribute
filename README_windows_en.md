@@ -1,91 +1,192 @@
 # Rogue DOS Tribute JEC.091 — Windows README
 
-These instructions are for 64-bit Windows 10/11. Rogue DOS Tribute is a derivative
-based on the Rogue 5.4 family and inspired by DOS Rogue 1.48; it is
-not a direct port of the original DOS 1.48 source. For game controls and items,
-see rogue_en.html or rogue_en.txt. For macOS/Linux builds, see README_mac_linux_en.md.
+This source tree builds `rogue.exe` for 64-bit Windows 10/11.
+For macOS/Linux build and installation instructions, see `README_mac_linux_en.md`.
 
-## Prerequisites
+Rogue DOS Tribute is an independent derivative based on Rogue 5.4-family
+source code, including the portable framework of Rogue 5.4.5 JEC. Its
+monsters, items, rules, controls, and presentation have been reworked with
+reference to DOS Rogue 1.48. It is not a direct port of the original
+DOS Rogue 1.48 source. It adds Japanese/English switching, color, and
+support for modern macOS, Linux, and Windows.
 
-Use the MSYS2 UCRT64 shell. The Windows build always uses the PDCursesMod
-VT backend; the former wincon backend is not supported.
+## Build
 
-    pacman -S --needed make zip mingw-w64-ucrt-x86_64-gcc \
+Use the **MSYS2 UCRT64** shell on Windows. Install MSYS2, open its UCRT64
+shell, and install these development packages:
+
+    pacman -S --needed make mingw-w64-ucrt-x86_64-gcc \
         mingw-w64-ucrt-x86_64-binutils mingw-w64-ucrt-x86_64-pdcurses
 
-## Build and run
+Normally, build directly from the source directory with:
+
+    make
+
+The default build creates:
+
+    ./rogue.exe
+
+Run it with:
+
+    ./rogue.exe
+
+The standard build uses these convenience option defaults:
+
+    color
+    extchars
+    nocursor
+
+You can override local compiler settings on the make command line:
+
+    make CC=gcc
+    make CFLAGS="-O2"
+
+To remove built objects and rebuild, use:
 
     make clean
     make
-    ./rogue.exe
 
-Change the executable name with PROGRAM or PROG (PROGRAM takes precedence):
+## Language selection
+
+Select the startup display language with the `language` option in `ROGUEOPTS`.
+In the UCRT64 shell, for example:
+
+    ROGUEOPTS=language=ja ./rogue.exe
+    ROGUEOPTS=language=en ./rogue.exe
+    ROGUEOPTS=language=auto ./rogue.exe
+
+`language=ja` selects Japanese, `language=en` selects English, and
+`language=auto` chooses the initial language from the OS settings. `auto`
+only determines the initial language and does not appear in the in-game
+options. During play, use the `language` option and press `J` for Japanese
+or `E` for English. Names and call names are stored as UTF-8 strings.
+
+The `ROGUEOPTS` value `language=ja/en/auto` takes priority over the build-time
+default. The ordinary `make` build defaults to `auto`, which consults the
+user's Windows UI language.
+
+`ROGUEOPTS` is read once at startup. On new games, `terse/noterse` and
+`jump/nojump` specify initial options; on restore, saved `terse` and `jump`
+values take precedence. Display language is selected at startup and can
+also be changed during play.
+
+To select a default initial language independent of the OS locale, use:
+
+    make japanese
+    make english
+    make original
+
+`make japanese` selects Japanese initially, and `make english` selects
+English. `make original` also selects English initially, without changing
+the DOS 1.48 gameplay rules or JEC color/option defaults.
+
+DOS-style key bindings are enabled by default. Set `nodoskeys` in
+`ROGUEOPTS` to use bindings based on Rogue 5.4 instead:
+
+    ROGUEOPTS=nodoskeys ./rogue.exe
+
+For controls, see the guide or press `?` during play.
+
+## Wizard mode
+
+To build with wizard mode enabled, use:
+
+    make wizard
+
+## Program and data file names
+
+Change the executable name at build time with `PROGRAM`. `PROG` is also
+accepted as an alias; `PROGRAM` takes precedence if both are specified.
+By default, the save, score, and lock file names follow the executable name.
 
     make PROGRAM=rogue-dos
     make PROG=rogue-dos
 
-The regular build selects its initial language from the Windows UI language,
-unless ROGUEOPTS contains language=ja or language=en. ROGUE_LANG is not used.
-DOS-style key bindings are the default; ROGUEOPTS=nodoskeys selects Rogue 5.4-based keys.
+The executable is then `rogue-dos.exe`, and the data files are named:
 
-    make japanese       Japanese initial language
-    make english        English initial language
-    make original       English initial language, unchanged gameplay/colors
-    make wizard         Include wizard functions
+    rogue-dos.save
+    rogue-dos.scr
+    rogue-dos.lck
 
-These targets rebuild the .win.o objects without deleting save, score or lock
-files. PROGRAM also determines their default names. Use FILEDIR=games to
-specify a data directory; create that directory before launching the game.
-Windows Unicode file operations support Japanese paths.
+Use `FILEDIR` to specify a common data-file directory:
+
+    make PROGRAM=rogue-dos FILEDIR=games
+
+When launching an uninstalled executable directly, create the directory
+beforehand. Japanese file paths are handled using the Windows Unicode API.
+
+Individual file names can also be specified and take precedence over `FILEDIR`:
+
+    make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
 
 ## Startup and display
 
-A direct Explorer launch requests an 80x24 private console. Launching from
-an existing cmd, PowerShell or UCRT64 session does not resize that terminal.
-If the default saved game exists on a direct launch, choose:
+Double-clicking the EXE in Explorer opens a dedicated console and requests
+an 80×24-character window. Launching from an existing cmd, PowerShell, or
+UCRT64 terminal does not resize that terminal.
+
+If the default saved game exists on direct launch, choose:
 
     R / Enter    Resume saved adventure
     N            Start a new game
     F            Choose another save file
     Q            Quit
 
-With no default save, a new game starts automatically. A Unicode filename can
-also be dragged onto the EXE to restore that saved game.
+Without a default saved game, a new game starts. You can also drag and drop
+a save file onto the EXE to restore it.
 
-    ./rogue.exe -s              Show scores
-    ./rogue.exe -r              Resume default save
-    ./rogue.exe 'Adventure.save' Resume named file
+    ./rogue.exe -s               Show scores
+    ./rogue.exe -r               Resume default save
+    ./rogue.exe 'Adventure.save'  Resume named file
 
-Restoring a game normally consumes (deletes) its save file: back it up before
-testing. Ordinary Japanese input and standalone emoji are supported; complex
+Restoring a game normally consumes (deletes) the save file, so keep a copy
+when testing. Japanese input and standalone emoji are supported; complex
 emoji sequences depend on the terminal and font.
 
-## Windows distribution ZIP
+## Files
 
-After building the Windows executable in MSYS2 UCRT64, create a ZIP with:
+Default save file:
 
-    make dist.win
+    $(PROGRAM).save, normally rogue.save
 
-The archive `rogue_dos_tribute_jec091_windows-rogue.zip` contains the EXE,
-Japanese/English Windows READMEs, the HTML/text guides, and LICENSE.TXT.
-No DLLs or test scripts are bundled. MSYS2's zip utility is required:
+Default score file:
 
-    pacman -S --needed zip
+    $(PROGRAM).scr, normally rogue.scr
 
-If desired, inspect runtime DLL dependencies manually with `ldd rogue.exe`.
-When all dependencies resolve to standard Windows System32 DLLs, bundling
-extra DLLs is generally unnecessary. Before releasing, also test the EXE on
-Windows 10/11 without MSYS2 installed. The Windows icon is embedded in the
-EXE; use `make dist.src` for a source archive.
+Default lock file:
 
-## GitHub Actions build verification
+    $(PROGRAM).lck, normally rogue.lck
 
-The .github/workflows/build.yml workflow runs on push, pull requests, and
-manual dispatch. It builds the normal and initially-English (make original)
-variants on Linux, macOS, and Windows UCRT64. It saves executables and
-Windows distribution ZIPs as build artifacts.
+## Documentation
 
-Workflow artifacts are for build verification, not standalone releases.
-Before publishing, test Windows Terminal and ConsoleHost (start/end curtains,
-grave, floor transition, Japanese save/restore), and check that no extra
-non-system runtime DLLs are required.
+The source tree includes these user-facing documents:
+
+    rogue_ja.txt            Japanese plain-text guide
+    rogue_en.txt            English plain-text guide
+    rogue_ja.html           Japanese HTML guide
+    rogue_en.html           English HTML guide
+    README_mac_linux_ja.md  macOS/Linux README (Japanese)
+    README_mac_linux_en.md  macOS/Linux README (English)
+    rogue.6.en.in           English manual-page template
+    rogue.6.ja.in           Japanese manual-page template
+
+See the guides for game controls and item descriptions.
+
+## Main characteristics of this port
+
+Rogue DOS Tribute retains the portable build/display framework of the
+Rogue 5.4.5 JEC port while adapting gameplay toward classic DOS Rogue 1.48:
+
+- UTF-8 Japanese/English display with runtime language switching
+- Support for MSYS2 UCRT64 builds on Windows 10/11
+- Standard builds default to color, one identify-scroll type, and cursor hiding during ordinary play
+- Runtime-selectable extended characters via `extchars / noextchars`
+- DOS-style corridor and maze-passage display with a dedicated player color on passage cells
+- Potion throwing effects for monsters
+- DOS-style potion list, including `paralysis` and `thirst quenching`
+- A single identify scroll type, `blank paper`, and `vorpalize weapon`
+- Ice Monster frost attacks and slime splitting
+- The wand/staff of striking, crossbow, and crossbow bolts
+- Monster names, stats, flags, and level-selection tables adjusted toward DOS Rogue 1.48
+- `PROGRAM`-based executable naming with matching default save, score, and lock file names
+- Japanese and English guides/manual pages updated to match this source
