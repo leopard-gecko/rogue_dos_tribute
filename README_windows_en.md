@@ -32,7 +32,7 @@ This produces **`rogue.exe`**. For an ordinary build, `make` alone is also suffi
 | Purpose | Command |
 |---|---|
 | Regular build | `make` |
-| Build as `jrogue.exe` | `make PROGRAM=jrogue` (or `make PROG=jrogue`) |
+| Build as `rogue-dos.exe` | `make PROGRAM=rogue-dos` (or `make PROG=rogue-dos`) |
 | Use Japanese as the initial language | `make japanese` |
 | Use English as the initial language | `make english` |
 | Use English initially, with the normal gameplay defaults | `make original` |

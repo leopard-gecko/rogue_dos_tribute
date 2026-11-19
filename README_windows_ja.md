@@ -32,7 +32,7 @@ make
 | 目的 | コマンド |
 |---|---|
 | 通常ビルド | `make` |
-| 実行ファイル名を `jrogue.exe` にする | `make PROGRAM=jrogue`（または `make PROG=jrogue`） |
+| 実行ファイル名を `rogue-dos.exe` にする | `make PROGRAM=rogue-dos`（または `make PROG=rogue-dos`） |
 | 日本語を初期言語にする | `make japanese` |
 | 英語を初期言語にする | `make english` |
 | 通常と同じゲーム設定で、初期言語を英語にする | `make original` |

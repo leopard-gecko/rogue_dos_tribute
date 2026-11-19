@@ -47,7 +47,7 @@ This produces **`rogue`**. If no previous build files exist, `make` alone is suf
 | Purpose | Command |
 |---|---|
 | Regular build | `make` |
-| Name the executable `jrogue` | `make PROGRAM=jrogue` (or `make PROG=jrogue`) |
+| Name the executable `rogue-dos` | `make PROGRAM=rogue-dos` (or `make PROG=rogue-dos`) |
 | Start in Japanese by default | `make japanese` |
 | Start in English by default | `make english` |
 | Keep regular game defaults but start in English | `make original` |
