@@ -1,288 +1,192 @@
-# Rogue DOS Tribute JEC.091
+# Rogue DOS Tribute JEC.091 — macOS / Linux（日本語）
 
-このソースツリーは、単一の実行ファイル "rogue" をビルドします。
-Windows 10/11 用のビルド・起動・配布方法は README_windows_ja.md に
-まとめています。以下のビルド・インストール手順は macOS / Linux 用です。
+この文書では、**macOS、Linux、Raspberry Pi OS** でのビルド、起動、インストール、セーブ・スコアなどの保存先について説明します。ゲームの紹介と各OS向け文書の一覧は[リポジトリのREADME](README.md)、操作方法やアイテムの説明は[「【運命の洞窟】への案内書」](rogue_ja.html)をご覧ください。
 
-Rogue DOS Tributeは、Rogue 5.4系（Rogue 5.4.5 JECの移植基盤を含む）の
-ソースコードを出発点に、DOS版Rogue 1.48を参考として、
-怪物・アイテム・ゲームルール・キー操作・演出を再構成した独立した派生版です。
-オリジナルのDOS版Rogue 1.48のソースをそのまま移植したものではありません。
-日本語・英語の切り替え、カラー表示、macOS・Linux・Windowsへの対応を含みます。
+English version: [README_mac_linux_en.md](README_mac_linux_en.md)
 
-## ビルド
+## 1. 開発環境の準備
 
-このソースツリーは、同梱されている Makefile をそのまま使用できます。
-また、Linux などで環境に合わせた設定を先に行いたい場合のために、
-軽量な configure スクリプトも用意しています。この configure は
-Autoconf で生成されたものではなく、Makefile が読み込む config.mk を
-作成するだけです。Makefile や config.h は生成しません。
+ソースコードを展開し、ターミナルでそのディレクトリを開きます。
 
-macOS では、C コンパイラがまだ使えない場合は Xcode command line tools を
-インストールしてください。
+**macOS：** Appleのコマンドラインツールをインストールします。
 
-Linux では、C コンパイラ、make、pkg-config、および ncurses の
-ワイド文字対応開発パッケージをインストールしてください。パッケージ名は
-ディストリビューションによって異なりますが、代表的な例は以下の通りです。
+```sh
+xcode-select --install
+```
 
-    Debian / Ubuntu / Raspberry Pi OS: build-essential pkg-config libncurses-dev
-    Fedora:                            gcc make pkg-config ncurses-devel
-    Arch Linux:                        base-devel pkg-config ncurses
-    Alpine Linux:                      build-base pkgconf ncurses-dev
+**Ubuntu / Debian / Raspberry Pi OS：**
 
-インストールコマンドの例:
+```sh
+sudo apt update
+sudo apt install build-essential pkg-config libncurses-dev
+```
 
-    macOS:
-        xcode-select --install
+**Fedora：** `sudo dnf install gcc make pkgconf-pkg-config ncurses-devel`  
+**Arch Linux：** `sudo pacman -S --needed base-devel pkgconf ncurses`  
+**Alpine Linux：** `sudo apk add build-base pkgconf ncurses-dev`
 
-    Debian / Ubuntu / Raspberry Pi OS:
-        sudo apt update
-        sudo apt install build-essential pkg-config libncurses-dev
+通常は同梱の `Makefile` を使用して、そのまま `make` でビルドできます。Linuxで使用環境に合わせた設定を保存する場合は、ビルド前に次のように実行します。
 
-    Fedora:
-        sudo dnf install gcc make pkgconf-pkg-config ncurses-devel
+```sh
+./configure
+```
 
-    Arch Linux:
-        sudo pacman -S --needed base-devel pkgconf ncurses
+`configure` は、利用できるcursesライブラリを調べて `config.mk` に設定を保存する軽量なスクリプトです。Autoconf製のスクリプトではなく、`Makefile` や `config.h` を生成しません。macOSでもcurses関連の調整が必要な場合は、`--with-curses-cflags` または `--with-curses-libs` を指定できます。
 
-    Alpine Linux:
-        sudo apk add build-base pkgconf ncurses-dev
+## 2. ビルド
 
-通常は以下だけでビルドできます。
+通常は次のコマンドでビルドします。
 
-    make
+```sh
+make clean
+make
+```
 
-configure を使う場合は、以下のように実行します。
+成功すると **`rogue`** が作成されます。既にビルド済みのファイルがない場合は `make` だけでも構いません。
 
-    ./configure
-    make
+| 目的 | コマンド |
+|---|---|
+| 通常ビルド | `make` |
+| 実行ファイル名を `jrogue` にする | `make PROGRAM=jrogue`（または `make PROG=jrogue`） |
+| 日本語を初期言語にする | `make japanese` |
+| 英語を初期言語にする | `make english` |
+| 通常と同じゲーム設定で、初期言語を英語にする | `make original` |
+| ウィザード機能を組み込む | `make wizard` |
 
-configure は、pkg-config、ncursesw-config、-lncursesw、-lncurses、-lcurses
-の順に curses / ncurses を検出し、結果を config.mk に保存します。
-config.mk は Makefile から自動的に読み込まれます。
+通常の `make` はOSの言語設定に応じて初期言語を選択します。`make original` は初期言語だけを英語にし、**ゲームルールやカラーなどの既定の設定は変更しません**。いずれもプレイ中に表示言語を切り替えられます。
 
-標準のビルドでは、次の実行ファイルが作られます。
+標準ビルドの主な初期設定は次のとおりです。`on` は有効、`off` は無効を意味します。
 
-    ./rogue
+| 設定 | 通常ビルド `make` | `make original` |
+|---|---|---|
+| 初期言語 | OSの設定から自動選択 | 英語 |
+| `color`（カラー表示） | on | on |
+| `extchars`（拡張文字表示） | on | on |
+| `cursor`（カーソル表示） | off | off |
 
-標準のビルドでは、カラー表示などを有効にしたオプション既定値を使用します。
+DOS版風のキー操作は既定で有効です。起動時に環境変数 `ROGUEOPTS` で `nodoskeys` を指定すると、別のキー配置に切り替えられます。ゲームオプションの詳細は案内書をご覧ください。
 
-    color
-    extchars
-    nocursor
+`configure` を使用する場合は、次のような指定もできます。
 
-ローカル環境に合わせた設定は、make のコマンドラインから指定できます。例:
+```sh
+./configure --program=rogue-dos
+./configure --prefix=/usr --program=rogue-dos
+./configure --default-language=ja
+./configure --ja-man-style=mac
+./configure --with-curses-libs="-lncursesw"
+```
 
-    make CC=clang
-    make CFLAGS="-O2" LDFLAGS="..." LIBS="-lncursesw"
+`--default-language` は `auto`、`ja`、`en` を指定できます。`PROGRAM` と `PROG` を同時に指定した場合は `PROGRAM` が優先されます。コンパイラやビルド用フラグは、例えば `make CC=clang` や `make CFLAGS="-O2"` のように指定できます。
 
-configure を使う場合は、代表的には以下のように指定できます。
+ビルド方法やファイル名などの設定を変更した場合は、`make clean` してから再ビルドしてください。**`make clean` と `make distclean` は、既存のセーブ・スコア・ロックファイルを削除しません。** `make distclean` はビルド生成物に加えて `config.mk` と `config.log` も削除します。
 
-    ./configure --program=rogue-dos
-    ./configure --prefix=/usr --program=rogue-dos
-    ./configure --default-language=ja
-    ./configure --ja-man-style=mac
-    ./configure --with-curses-libs="-lncursesw"
+## 3. 起動
 
-configure で作成された config.mk と config.log を削除するには、以下を
-使用します。
+ビルドしたフォルダーで次のように起動します。
 
-    make distclean
+```sh
+./rogue
+```
 
-## 配布アーカイブ
+通常起動では新しいゲームが始まります。ターミナルには **80列×24行以上** を用意してください。
 
-配布用のターゲットは2種類あります。
+| コマンド | 内容 |
+|---|---|
+| `./rogue -r` | 既定のセーブファイルから再開する |
+| `./rogue -s` | スコア一覧を表示する |
+| `./rogue 保存名.save` | 指定したセーブファイルから再開する |
 
-    make dist.src
+起動時の表示言語やオプションは、環境変数 **`ROGUEOPTS`** でも指定できます。
 
-ソース配布用の rogue_dos_tribute_jec091-src.tar.gz を作成します。ソースを公開する
-場合はこちらを使用します。ソースファイル、ビルド用ファイル、ライセンス、README、
-案内書、HTML案内書、man ページのテンプレートが含まれます。
+```sh
+ROGUEOPTS=language=ja ./rogue
+ROGUEOPTS=language=en ./rogue
+ROGUEOPTS=language=auto ./rogue
+ROGUEOPTS=nodoskeys ./rogue
+```
 
-    make dist
+`language=auto` はOSの言語設定から初期言語を判定します。macOS/Linuxでは `LC_ALL`、`LC_MESSAGES`、`LANG` の順に参照します。`ROGUEOPTS` は起動時に読み込まれ、オプション画面で変更できる項目はゲーム中にも変更できます。セーブから再開するときは、保存済みの `terse` と `jump` の値が起動時の指定より優先されます。
 
-実行ファイルと man ページをビルドしたうえで、バイナリ／文書配布用の
-rogue_dos_tribute_jec091.tar.gz を作成します。実行ファイル、ライセンス、README、
-案内書、HTML案内書、生成済み man ページが含まれます。
+操作方法やオプションについては案内書、またはゲーム中の `?` コマンドをご覧ください。
 
-## 言語選択
+## 4. インストール（任意）
 
-ゲームの表示言語は、起動時には ROGUEOPTS の language で指定できます。
+ビルドしたフォルダーで遊ぶ場合、インストールは不要です。通常は次のコマンドで `/usr/local` 以下に実行ファイル、日英のmanページ、同梱文書をインストールします。
 
-    ROGUEOPTS=language=ja ./rogue
-    ROGUEOPTS=language=en ./rogue
-    ROGUEOPTS=language=auto ./rogue
+```sh
+sudo make install
+```
 
-language=ja は日本語、language=en は英語を指定します。language=auto は
-起動時の初期言語を OS の言語設定から自動判定します。auto は初期言語を
-決めるためだけのモードで、ゲーム中の言語設定には表示されません。
-プレイ中はオプション画面の "language" で、日本語は J、英語は E を押して
-切り替えます。ユーザーが入力した名前や呼び名は UTF-8 文字列として保持されます。
+別の場所へインストールする場合は `./configure --prefix=DIR` を指定できます。`--program=NAME` で実行ファイル名を変更できます。日本語manページのインストール先は `--ja-man-style=auto|linux|mac|all|none` で選択できます。
 
-起動時の優先順位は、ROGUEOPTS の language=ja/en/auto、ビルド時の既定値、
-auto の場合の OS 言語判定の順です。通常の make は auto を既定にします。
-Unix 系では LC_ALL、LC_MESSAGES、LANG の順に確認し、日本語ロケールなら
-日本語、それ以外は英語になります。Windows ではユーザーの UI 言語から判定します。
+パッケージ作成などのために、一時的なインストール先を指定することもできます。
 
-ROGUEOPTS は起動時に一度だけ読み込みます。新しいゲームでは terse / noterse、
-jump / nojump を初期設定に使用しますが、セーブから再開したゲームでは
-保存済みの terse と jump の値を優先します。表示言語は従来どおり起動時に
-決まり、ゲーム中にも変更できます。
+```sh
+make install DESTDIR=/tmp/rogue-stage prefix=/usr
+```
 
-ユーザーのロケールを無視する既定言語のバイナリを作る場合は、
-以下を使用します。
+アンインストールするときは、インストール時と同じ設定で `make uninstall` を実行してください。`make install` はセーブ・スコア・ロックファイルを作成・インストールしません。ただし `FILEDIR` が指定されている場合に限り、そのディレクトリを必要に応じて作成します。
 
-    make japanese
-    make english
-    make original
+## 5. セーブ・スコアなどの保存先
 
-make english は標準のオプション既定値のまま、英語を既定言語にします。
-make original は、Rogue DOS Tribute のゲームルールとカラーなどの既定値は
-そのままに、表示言語の初期値を英語にします。
-make japanese は標準のオプション既定値のまま、日本語を既定言語にします。
-configure では --default-language=auto、ja、en を指定できます。
+既定では、セーブ **`rogue.save`**、スコア **`rogue.scr`**、ロック **`rogue.lck`** の各ファイルをゲームの作業ディレクトリに置きます。実行ファイル名を変更すると、既定のデータファイル名も連動して変わります。
 
-DOS版風のキー操作は既定で有効です。ROGUEOPTS に nodoskeys を指定すると、
-Rogue 5.4系を基本とするキー操作に切り替わります。
+**3種類のデータファイルを専用ディレクトリにまとめる例：**
 
-    ROGUEOPTS=nodoskeys ./rogue
+```sh
+mkdir -p "$HOME/.local/share/rogue"
+./configure --program=rogue-dos --file-dir="$HOME/.local/share/rogue"
+make clean
+make
+```
 
-キー操作の詳細は案内書、またはゲーム中の ? コマンドを参照してください。
+この例では実行ファイルが `rogue-dos`、データファイルが `rogue-dos.save`、`rogue-dos.scr`、`rogue-dos.lck` になります。直接実行する場合は、上の例のように保存先を先に作成し、プレイするユーザーの書き込み権限を確保してください。`make install` によって保存先ディレクトリを作成する場合も、所有者とアクセス権限に注意してください。
 
-## ウィザードモード
+`configure` を使わず、ビルド時に `FILEDIR` と `PROGRAM`（または `PROG`）を指定することもできます。
 
-ウィザードモードを有効にしてビルドする場合は、以下を使用します。
+```sh
+make PROGRAM=rogue-dos FILEDIR="$HOME/.local/share/rogue"
+```
 
-    make wizard
+個別のファイル名は `SAVEFILE`、`SCOREFILE`、`LOCKFILE` で指定できます。個別指定は `FILEDIR` より優先されます。
 
-## プログラム名とデータファイル名
+```sh
+make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
+./configure --program=rogue-dos --save-file=my.save --score-file=my.scr --lock-file=my.lck
+```
 
-実行ファイル名は、ビルド時に PROGRAM で変更できます。Clone III などの
-他の移植版と同じように、PROG も別名として使えます。PROGRAM と
-PROG を同時に指定した場合は PROGRAM が優先されます。既定では、
-セーブファイル、スコアファイル、ロックファイルの名前も PROGRAM に
-連動します。それぞれのファイル名は個別に上書きすることもできます。
+相対パスを指定した場合は、ゲーム起動時の作業ディレクトリを基準とします。保存先やファイル名を変更した後は再ビルドしてください。
 
-例:
+## 6. ファイルの説明と配布
 
-    make PROGRAM=rogue-dos
-    make PROG=rogue-dos
+| ファイル | 用途 |
+|---|---|
+| `rogue` | ビルド後の実行ファイル |
+| `rogue.save` / `rogue.scr` / `rogue.lck` | セーブ・スコア・ロックファイル（プレイ時に使用） |
+| `configure` / `Makefile` | ビルド・設定・インストール |
+| `config.mk` / `config.log` | `configure` が生成する設定とログ |
+| `rogue.6.en.in` / `rogue.6.ja.in` | 日英のmanページの原稿 |
+| `rogue_ja.html` / `rogue_en.html` | 日本語・英語のHTML案内書 |
+| `rogue_ja.txt` / `rogue_en.txt` | 日本語・英語のテキスト案内書 |
+| `README_windows_ja.md` / `README_windows_en.md` | Windows向けREADME |
+| `*.c` / `*.h` | ソースコード |
 
-configure を使う場合は、--program を使用します。
+ソース配布用アーカイブは次のコマンドで作成できます。
 
-    ./configure --program=rogue-dos
+```sh
+make dist.src
+```
 
-この場合、実行ファイルは rogue-dos として作られ、プレイ時のデータファイルは
-以下になります。
+`rogue_dos_tribute_jec091-src.tar.gz` が作成され、ソースコード、ビルド用ファイル、ライセンス、README、案内書、manページの原稿が含まれます。
 
-    rogue-dos.save
-    rogue-dos.scr
-    rogue-dos.lck
+実行ファイルと生成済みmanページを含むアーカイブは、次のコマンドで作成します。
 
-3つのデータファイルを同じディレクトリに置く場合は、FILEDIR または
---file-dir を指定します。FILEDIR が指定されている場合、make install は
-指定されたディレクトリを自動的に作成します。
+```sh
+make dist
+```
 
-    make PROGRAM=rogue-dos FILEDIR=$HOME/.local/share/rogue
-    make PROGRAM=rogue-dos FILEDIR=$HOME/.local/share/rogue install
+`rogue_dos_tribute_jec091.tar.gz` が作成されます。ゲームの紹介と同梱文書へのリンクは[リポジトリのREADME](README.md)をご覧ください。
 
-configure を使う場合は以下のように指定します。
+## 7. 著作権・ライセンス
 
-    ./configure --program=rogue-dos --file-dir=$HOME/.local/share/rogue
-    make
-    make install
-
-インストールせずにビルドディレクトリから直接実行する場合は、
-指定したディレクトリを事前に作成しておいてください。
-
-この場合、データファイルは以下になります。
-
-    ~/.local/share/rogue/rogue-dos.save
-    ~/.local/share/rogue/rogue-dos.scr
-    ~/.local/share/rogue/rogue-dos.lck
-
-ファイル名を個別に指定することもできます。個別指定は FILEDIR より優先されます。
-
-    make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
-    ./configure --program=rogue-dos --save-file=my.save --score-file=my.scr --lock-file=my.lck
-
-## インストール
-
-インストールは任意です。実行ファイル、英語版／日本語版のマニュアルページ、同梱文書を
-/usr/local 以下にインストールするには、以下を使用します。
-
-    sudo make install
-
-パッケージ作成や一時的なインストール先を指定するために、DESTDIR と
-prefix を使用できます。例:
-
-    make install DESTDIR=/tmp/rogue-stage prefix=/usr
-
-configure を使う場合は、インストール先を先に config.mk に保存できます。
-
-    ./configure --prefix=/usr --program=rogue-dos
-    make
-    make install DESTDIR=/tmp/rogue-stage
-
-アンインストールするには、同じインストール先の指定で以下を使用します。
-
-    sudo make uninstall
-
-素の make install では、日本語 man ページを Linux 向けの ja/man6 と、
-macOS 向けの ja_JP.UTF-8/man6・ja.UTF-8/man6 にインストールします。
-configure を使う場合は、--ja-man-style=auto によりOSに応じた場所が選ばれます。
-必要に応じて --ja-man-style=linux、mac、all、none も指定できます。
-
-make install は *.scr、*.lck、*.save ファイルを作成・インストールしません。
-ただし FILEDIR が指定されている場合に限り、そのディレクトリだけは
-自動的に作成します。*.scr、*.lck、*.save はプレイ時のデータファイルであり、
-実行時のセーブファイル／スコアファイル設定に従ってゲームが作成・使用します。
-
-## ファイル
-
-標準のセーブファイル:
-
-    $(PROGRAM).save、通常は rogue.save
-
-標準のスコアファイル:
-
-    $(PROGRAM).scr、通常は rogue.scr
-
-標準のロックファイル:
-
-    $(PROGRAM).lck、通常は rogue.lck
-
-## 文書
-
-ソースツリーには、以下のユーザー向け文書が含まれています。
-
-    rogue_ja.txt     日本語プレーンテキスト解説書
-    rogue_en.txt     このソースに合わせて更新した英語プレーンテキスト解説書
-    rogue_ja.html    日本語 HTML 解説書
-    rogue_en.html    英語 HTML 解説書
-    README_windows_ja.md  Windows版ビルド・起動・配布案内（日本語）
-    README_windows_en.md  Windows版ビルド・起動・配布案内（英語）
-    rogue.6.en.in    英語版 man ページのテンプレート
-    rogue.6.ja.in    日本語版 man ページのテンプレート
-
-README_mac_linux_ja.md は、ビルド、パッケージング、実行時の言語切り替えに関する
-日本語の説明です。英語版は README_mac_linux_en.md に分けています。
-
-## この移植版の主な特徴
-
-Rogue DOS Tributeでは、Rogue 5.4.5 JEC由来の移植・表示基盤を使いながら、
-ゲームデータと一部のルールをDOS版Rogue 1.48に近づけています。
-
-- UTF-8 の日本語／英語表示に対応し、実行時に表示言語を切り替え可能にした
-- macOS と一般的な Linux で使いやすい Makefile ベースのビルド方式に整理し、軽量な configure を追加した
-- 標準ビルドでカラー表示、識別の巻き物1種類化、通常プレイ中のカーソル非表示を既定にした
-- 拡張文字の使用を extchars / noextchars で切り替えられるようにした
-- 通路や迷路をDOS版風に表示し、通路上のプレイヤーには専用色を使うようにした
-- 水薬を怪物に投げた時の特殊効果を追加した
-- 水薬表を DOS版風にし、paralysis と thirst quenching を追加した
-- 識別の巻き物を1種類にし、blank paper と vorpalize weapon を追加した
-- Ice Monster の frost 攻撃と slime の分裂を追加した
-- striking のつえ/魔法の棒、crossbow、crossbow bolt を追加した
-- 怪物名、能力値、フラグ、出現テーブルを DOS版 Rogue 1.48 風に調整した
-- PROGRAM 指定により、実行ファイル名と標準のセーブ／スコア／ロックファイル名を連動して変更できるようにした
-- 日本語版／英語版の解説文書と man ページの内容を、このソースの仕様に合わせて整理した
+オリジナルRogueおよび既存コードの著作権・ライセンス条件、この派生版での日本語化・機能追加・Windows用アイコンなどの変更内容は、[LICENSE.TXT](LICENSE.TXT) に記載しています。

@@ -2,6 +2,7 @@
 # Use the top-level Makefile: make, make original, make japanese, etc.
 # PDCursesMod package: mingw-w64-ucrt-x86_64-pdcurses.
 # Windows icon resource: mingw-w64-ucrt-x86_64-binutils (windres).
+# make FILEDIR=saved-games stores data in the Windows Saved Games/Rogue folder.
 CC = gcc
 WINDRES ?= windres
 MINGW_PREFIX ?= /ucrt64
@@ -9,10 +10,27 @@ PROG ?=
 PROGRAM ?= $(if $(PROG),$(PROG),rogue)
 DEFAULT_LANGUAGE ?= 0
 FILEDIR ?=
-ifneq ($(strip $(FILEDIR)),)
-SAVEFILE ?= $(FILEDIR)/$(PROGRAM).save
-SCOREFILE ?= $(FILEDIR)/$(PROGRAM).scr
-LOCKFILE ?= $(FILEDIR)/$(PROGRAM).lck
+
+# Resolve the actual Windows known folder at build time, including
+# redirection. The absolute result is embedded in the EXE.
+# Do not query/create folders when cleaning or packaging source files.
+ifeq ($(strip $(FILEDIR)),saved-games)
+ifneq ($(filter-out clean dist.src,$(if $(strip $(MAKECMDGOALS)),$(MAKECMDGOALS),all)),)
+SAVED_GAMES_FILEDIR := $(shell powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ./windows/windows-saved-games.ps1)
+ifeq ($(strip $(SAVED_GAMES_FILEDIR)),)
+$(error Cannot resolve Windows Saved Games; check PowerShell and windows/windows-saved-games.ps1)
+endif
+RESOLVED_FILEDIR := $(SAVED_GAMES_FILEDIR)
+AUTO_PREPARE_FILEDIR := 1
+endif
+else
+RESOLVED_FILEDIR := $(FILEDIR)
+endif
+
+ifneq ($(strip $(RESOLVED_FILEDIR)),)
+SAVEFILE ?= $(RESOLVED_FILEDIR)/$(PROGRAM).save
+SCOREFILE ?= $(RESOLVED_FILEDIR)/$(PROGRAM).scr
+LOCKFILE ?= $(RESOLVED_FILEDIR)/$(PROGRAM).lck
 else
 SAVEFILE ?= $(PROGRAM).save
 SCOREFILE ?= $(PROGRAM).scr
@@ -46,8 +64,22 @@ endif
 LDFLAGS ?=
 LDLIBS = -lpdcurses_vt -lwinmm -luser32 -lgdi32 -lshell32 -lshlwapi -ladvapi32 -lcomdlg32
 
-.PHONY: all clean japanese english original master wizard dist.src dist.win
+.PHONY: all clean japanese english original master wizard prepare-filedir dist.src dist.win
 all: $(PROGRAM).exe
+# Only the saved-games shorthand creates its directory automatically.
+ifeq ($(AUTO_PREPARE_FILEDIR),1)
+$(PROGRAM).exe: | prepare-filedir
+endif
+prepare-filedir:
+ifeq ($(strip $(RESOLVED_FILEDIR)),)
+	@echo "FILEDIR is unset; data files use the current directory."
+else
+ifeq ($(AUTO_PREPARE_FILEDIR),1)
+	@powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File ./windows/windows-saved-games.ps1 -Create
+else
+	@mkdir -p "$$(cygpath -u "$(RESOLVED_FILEDIR)")"
+endif
+endif
 %.win.o: %.c $(HEADERS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 $(ICON_OBJ): windows/rogue-icon.rc windows/rogue.ico

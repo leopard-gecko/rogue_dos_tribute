@@ -1,191 +1,213 @@
-# Rogue DOS Tribute JEC.091 — Windows版README
+# Rogue DOS Tribute JEC.091 — Windows（日本語）
 
-このソースツリーは、Windows 10 / 11（64ビット）用の実行ファイル `rogue.exe` をビルドします。
-macOS / Linuxでのビルド・インストール手順は `README_mac_linux_ja.md` にまとめています。
+この文書では、**Windows 10 / 11（64ビット）** 向けのビルド、起動、環境変数、セーブ・スコアなどの保存先について説明します。ゲームの紹介と各OS向け文書の一覧は[リポジトリのREADME](https://github.com/leopard-gecko/rogue_dos_tribute)、操作方法やアイテムの説明は[「【運命の洞窟】への案内書」](rogue_ja.html)をご覧ください。
 
-Rogue DOS Tributeは、Rogue 5.4系（Rogue 5.4.5 JECの移植基盤を含む）の
-ソースコードを出発点に、DOS版Rogue 1.48を参考として、
-怪物・アイテム・ゲームルール・キー操作・演出を再構成した独立した派生版です。
-オリジナルのDOS版Rogue 1.48のソースをそのまま移植したものではありません。
-日本語・英語の切り替え、カラー表示、macOS・Linux・Windowsへの対応を含みます。
+English version: [README_windows_en.md](README_windows_en.md)
 
-## ビルド
+## 1. 開発環境の準備
 
-WindowsではMSYS2の **UCRT64** シェルを使用します。MSYS2をインストールし、
-UCRT64シェルで次の開発用パッケージをインストールしてください。
+ソースからWindows版を作る場合は、**MSYS2 UCRT64** を使用します。<https://www.msys2.org/> からMSYS2をインストールし、スタートメニューの「MSYS2 UCRT64」を開いてください。
 
-    pacman -S --needed make mingw-w64-ucrt-x86_64-gcc \
-        mingw-w64-ucrt-x86_64-binutils mingw-w64-ucrt-x86_64-pdcurses
+```sh
+pacman -Syu
+```
 
-通常は、ソースツリーのディレクトリで以下だけでビルドできます。
+更新のため再起動が必要と表示されたらUCRT64を開き直して更新を完了し、続いて開発ツールとPDCursesModをインストールします。
 
-    make
+```sh
+pacman -S --needed make mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-binutils mingw-w64-ucrt-x86_64-pdcurses
+```
 
-標準の実行ファイルは次の場所に作成されます。
+ソースコードを展開したフォルダーへ移動してください。
 
-    ./rogue.exe
+## 2. ビルド
 
-起動するには次を実行します。
+```sh
+make clean
+make
+```
 
-    ./rogue.exe
+成功すると **`rogue.exe`** が作成されます。通常のビルドには `make` だけを使用することもできます。
 
-標準ビルドでは、カラー表示などを有効にした次のオプション既定値を使用します。
+| 目的 | コマンド |
+|---|---|
+| 通常ビルド | `make` |
+| 実行ファイル名を `jrogue.exe` にする | `make PROGRAM=jrogue`（または `make PROG=jrogue`） |
+| 日本語を初期言語にする | `make japanese` |
+| 英語を初期言語にする | `make english` |
+| 通常と同じゲーム設定で、初期言語を英語にする | `make original` |
+| ウィザード機能を組み込む | `make wizard` |
 
-    color
-    extchars
-    nocursor
+通常の `make` では、Windowsの表示言語から初期言語を自動選択します。`make original` は初期言語を英語にするもので、**ゲームルールやカラーなどの既定の設定は変更しません**。ビルド方法を切り替えるときは、`make clean` の後でビルドしてください。
 
-必要に応じて、コンパイラなどをmakeのコマンドラインから指定できます。
+標準ビルドでは、カラー表示、拡張文字の使用、通常プレイ中のカーソル非表示を既定としています。代表的な設定は次のとおりです。
 
-    make CC=gcc
-    make CFLAGS="-O2"
+| 設定 | 通常ビルド `make` | `make original` |
+|---|---|---|
+| 初期言語 | Windowsの表示言語から自動選択 | 英語 |
+| `color`（カラー表示） | on | on |
+| `extchars`（拡張文字表示） | on | on |
+| `cursor`（カーソル表示） | off | off |
 
-ビルドしたオブジェクトを削除して作り直すには、以下を使用します。
+DOS版風のキー操作は既定で有効です。起動時に `ROGUEOPTS` で `nodoskeys` を指定すると、別のキー配置を使用できます。オプションの詳細は案内書をご覧ください。
 
-    make clean
-    make
+必要に応じてコンパイラやビルド設定を指定できます。
 
-## 言語選択
+```sh
+make CC=gcc
+make CFLAGS="-O2"
+```
 
-ゲームの表示言語は、起動時には環境変数 `ROGUEOPTS` の `language` で指定できます。
-UCRT64シェルでの例：
+`PROGRAM` と `PROG` を両方指定した場合は、`PROGRAM` が優先されます。実行ファイル名を変更すると、既定のデータファイル名も連動して変更されます。
 
-    ROGUEOPTS=language=ja ./rogue.exe
-    ROGUEOPTS=language=en ./rogue.exe
-    ROGUEOPTS=language=auto ./rogue.exe
+## 3. 起動と終了
 
-`language=ja` は日本語、`language=en` は英語、`language=auto` はOSの
-言語設定による自動判定を指定します。`auto` は初期言語の決定にのみ使用し、
-ゲーム中のオプションには表示されません。プレイ中はオプション画面の
-`language` で、日本語は `J`、英語は `E` を押して切り替えます。
-名前や呼び名などの入力文字列はUTF-8として保持されます。
+エクスプローラーで **`rogue.exe` をダブルクリック**するとゲームを開始します。既定のセーブファイルがある場合は、起動時に次の操作を選べます。
 
-起動時は `ROGUEOPTS` の `language=ja/en/auto` がビルド時の既定値より
-優先されます。通常の `make` の初期設定は `auto` で、Windowsでは
-ユーザーのUI言語を参照します。
+| キー | 内容 |
+|---|---|
+| `R` または `Enter` | 保存した冒険を再開する |
+| `N` | 新しい冒険を開始する |
+| `F` | 別のセーブファイルを選ぶ |
+| `Q` | 終了する |
 
-`ROGUEOPTS` は起動時に一度だけ読み込みます。新しいゲームでは
-`terse/noterse`、`jump/nojump` を初期設定に使い、セーブからの再開時は
-保存済みの `terse`、`jump` の値が優先されます。表示言語は起動時に決まり、
-ゲーム中にも変更できます。
+既定のセーブファイルがなければ、新しいゲームを開始します。セーブファイルを `rogue.exe` にドラッグ＆ドロップして、指定したファイルから再開することもできます。日本語や空白を含むファイルパスに対応しています。
 
-OSの言語設定によらず初期言語を固定する場合は、以下を使用します。
+PowerShell、コマンドプロンプト、MSYS2 UCRT64からも起動できます。PowerShellでの例：
 
-    make japanese
-    make english
-    make original
+```powershell
+.\rogue.exe
+```
 
-`make japanese` は日本語、`make english` は英語を初期表示にします。
-`make original` は、ゲームルールやカラーなどの既定値を変えず、
-初期表示言語を英語にします。
+実行時の画面は **80列×24行** を使用します。ダブルクリックで起動した場合は端末ウィンドウのサイズも80×24に調整するよう試みます。既存の端末から起動した場合は、その端末のウィンドウサイズを変更しません。端末の種類や設定によっては、自動調整できない場合があります。
 
-DOS版風のキー操作は既定で有効です。`ROGUEOPTS` に `nodoskeys` を指定すると
-Rogue 5.4系を基本とするキー操作に切り替わります。
+コマンドラインからは、次のオプションも利用できます。
 
-    ROGUEOPTS=nodoskeys ./rogue.exe
+| コマンド | 内容 |
+|---|---|
+| `rogue.exe -r` | 既定のセーブファイルから再開する |
+| `rogue.exe -s` | スコア一覧を表示する |
+| `rogue.exe 冒険.save` | 指定したセーブファイルから再開する |
 
-キー操作の詳細は案内書、またはゲーム中の `?` コマンドを参照してください。
+PowerShellでは、実行ファイル名の前に **`.\`** を付けます（例：`.\rogue.exe -s`）。
 
-## ウィザードモード
+セーブから再開すると、原則として元のセーブファイルは削除されます。動作確認に使う場合は、事前にコピーを保存してください。日本語や単独の絵文字を入力できますが、複合絵文字の表示は端末やフォントに依存します。
 
-ウィザードモードを有効にしてビルドするには、次を使用します。
+## 4. Windowsでの環境変数の設定
 
-    make wizard
+ゲーム起動時の設定は、Windowsの環境変数 **`ROGUEOPTS`** で指定できます。ここではWindowsでの登録方法を説明します。指定できるオプションとその意味については案内書の「オプション」をご覧ください。
 
-## プログラム名とデータファイル名
+**一時的に指定する方法：** 現在開いている端末から起動する場合は、次のように指定します。`language=ja` は設定文字列の一例です。
 
-実行ファイル名は、ビルド時に `PROGRAM` で変更できます。`PROG` も別名として
-使用でき、同時に指定した場合は `PROGRAM` が優先されます。既定では、
-セーブ・スコア・ロックファイル名も実行ファイル名に連動します。
+PowerShell：
 
-    make PROGRAM=rogue-dos
-    make PROG=rogue-dos
+```powershell
+$env:ROGUEOPTS = 'language=ja'
+.\rogue.exe
+```
 
-この場合、実行ファイルは `rogue-dos.exe`、データファイルは次の名前になります。
+コマンドプロンプト：
 
-    rogue-dos.save
-    rogue-dos.scr
-    rogue-dos.lck
+```cmd
+set "ROGUEOPTS=language=ja"
+rogue.exe
+```
 
-データファイルの保存先ディレクトリを指定するには `FILEDIR` を使います。
+MSYS2 UCRT64：
 
-    make PROGRAM=rogue-dos FILEDIR=games
+```sh
+export ROGUEOPTS='language=ja'
+./rogue.exe
+```
 
-インストールせずに直接起動するときは、指定したディレクトリをあらかじめ
-作成してください。日本語を含むファイルパスはWindowsのUnicode APIで扱います。
+これらの設定は、現在の端末とそこから起動するプログラムに適用されます。別の端末やエクスプローラーからのダブルクリック起動には引き継がれません。
 
-ファイル名は個別にも指定でき、個別指定は `FILEDIR` より優先されます。
+**Windowsに登録して継続して使う方法：**
 
-    make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
+1. `Win + R` で「ファイル名を指定して実行」を開き、`sysdm.cpl` と入力します。
+2. 「詳細設定」タブから「環境変数」を開きます。
+3. 「ユーザー環境変数」で「新規」を選び、変数名に `ROGUEOPTS`、変数値に設定文字列（例：`language=ja`）を入力します。既に登録されている場合は「編集」を選びます。
+4. 「OK」で閉じ、改めて端末を開いて起動します。反映されない場合はサインアウトしてからサインインし直してください。
 
-## 起動と画面
+不要になった場合は、ユーザー環境変数から `ROGUEOPTS` を削除します。
 
-エクスプローラーからEXEをダブルクリックすると、専用のコンソールを
-80×24文字に自動調整します。既存のcmd、PowerShell、UCRT64などの
-ターミナルから起動した場合はウィンドウサイズを変更しません。
+## 5. セーブ・スコアなどの保存先
 
-標準セーブファイルがある状態でダブルクリックすると、次の操作を選べます。
+既定では、セーブ **`rogue.save`**、スコア **`rogue.scr`**、ロック **`rogue.lck`** の各ファイルをゲームの作業ディレクトリに置きます。保存先は、ソースからの**ビルド時**に `FILEDIR` で指定できます。
 
-    R / Enter    セーブした冒険を再開
-    N            新しい冒険を開始
-    F            別のセーブファイルを選択
-    Q            終了
+MSYS2 UCRT64で専用フォルダーに保存する場合：
 
-標準セーブがない場合は新規ゲームを開始します。セーブファイルをEXEに
-ドラッグ＆ドロップして再開することもできます。
+```sh
+mkdir -p rogue-data
+make clean
+make FILEDIR=rogue-data
+```
 
-    ./rogue.exe -s           スコア表示
-    ./rogue.exe -r           標準の保存先から再開
-    ./rogue.exe '冒険.save'  指定ファイルから再開
+Windows形式の絶対パスを `/` 区切りで指定することもできます。
 
-セーブから再開すると、原則として元のセーブファイルは消費（削除）されます。
-検証時にはコピーを保存してください。文字列入力では日本語や単独絵文字が
-使用できますが、複合絵文字の表示は端末やフォントに依存します。
+```sh
+make clean
+make FILEDIR='C:/Games/RogueDOS'
+```
 
-## ファイル
+通常の `FILEDIR` 指定ではフォルダーを自動作成しないため、事前に作成して書き込み権限を確保してください。次のコマンドで作成することもできます。
 
-標準のセーブファイル：
+```sh
+make prepare-filedir FILEDIR='C:/Games/RogueDOS'
+```
 
-    $(PROGRAM).save、通常は rogue.save
+**Windowsの「保存したゲーム」を使用する場合（個人用ビルド）：**
 
-標準のスコアファイル：
+```sh
+make clean
+make FILEDIR=saved-games
+```
 
-    $(PROGRAM).scr、通常は rogue.scr
+Windowsが管理する現在のユーザーの「保存したゲーム」フォルダーを取得し、その下の `Rogue` フォルダーに保存します。`Rogue` フォルダーが存在しない場合は自動作成します。通常は次の場所ですが、Windows側で保存先を移動している場合にも対応します。
 
-標準のロックファイル：
+```text
+C:/Users/<ユーザー名>/Saved Games/Rogue/
+```
 
-    $(PROGRAM).lck、通常は rogue.lck
+この設定では、**ビルドしたユーザーの保存先の絶対パスがEXEに組み込まれます**。別のPCへ配布する実行ファイルには使用せず、通常は `FILEDIR` を指定せずにビルドしてください。
 
-## 文書
+データファイル名は既定で `PROGRAM` と連動します。例えば次のように指定すると、`rogue-dos.exe` に対して `rogue-dos.save`、`rogue-dos.scr`、`rogue-dos.lck` を使用します。
 
-ソースツリーには以下のユーザー向け文書が含まれています。
+```sh
+make PROGRAM=rogue-dos
+```
 
-    rogue_ja.txt            日本語プレーンテキスト解説書
-    rogue_en.txt            英語プレーンテキスト解説書
-    rogue_ja.html           日本語HTML解説書
-    rogue_en.html           英語HTML解説書
-    README_mac_linux_ja.md  macOS / Linux向けREADME（日本語）
-    README_mac_linux_en.md  macOS / Linux向けREADME（英語）
-    rogue.6.en.in           英語版manページのテンプレート
-    rogue.6.ja.in           日本語版manページのテンプレート
+各ファイル名は個別に変更できます。個別指定は `FILEDIR` より優先されます。
 
-ゲームの操作やアイテムの詳細は案内書を参照してください。
+```sh
+make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
+```
 
-## この移植版の主な特徴
+相対パスの保存先は、起動時の作業ディレクトリを基準とします。`FILEDIR` などの保存先設定を変更するときは `make clean` してから再ビルドしてください。`make clean` は既存のセーブ・スコア・ロックファイルを削除しません。
 
-Rogue DOS Tributeでは、Rogue 5.4.5 JEC由来の移植・表示基盤を使いながら、
-ゲームデータと一部のルールをDOS版Rogue 1.48に近づけています。
+## 6. 配布ファイルと説明書
 
-- UTF-8の日本語／英語表示と、ゲーム中の表示言語切り替え
-- Windows 10 / 11向けのMSYS2 UCRT64ビルドへの対応
-- 標準ビルドでカラー表示、識別の巻き物1種類化、通常プレイ中のカーソル非表示を既定にした
-- `extchars / noextchars` による拡張文字の切り替え
-- DOS版風の通路・迷路表示と通路上のプレイヤー専用色
-- 水薬を怪物に投げた際の特殊効果
-- DOS版風の水薬表と `paralysis`、`thirst quenching` の追加
-- 識別の巻き物の1種類化と `blank paper`、`vorpalize weapon` の追加
-- Ice Monsterのfrost攻撃とslimeの分裂
-- strikingのつえ／魔法の棒、crossbow、crossbow boltの追加
-- 怪物名・能力値・フラグ・出現テーブルのDOS版Rogue 1.48風への調整
-- `PROGRAM` 指定に連動した実行ファイル名と標準データファイル名
-- このソースの仕様に合わせた日英の案内書・manページ
+ソース一式の配布用アーカイブはMSYS2 UCRT64から作成できます。
+
+```sh
+make dist.src
+```
+
+`rogue_dos_tribute_jec091-src.tar.gz` が作成されます。
+
+| ファイル | 用途 |
+|---|---|
+| `rogue.exe` | Windows版の実行ファイル（ビルド後） |
+| `rogue.save` / `rogue.scr` / `rogue.lck` | セーブ・スコア・ロックファイル（プレイ中に使用） |
+| `Makefile` / `Makefile.win` | ソースからのビルド |
+| `windows/rogue.ico` / `windows/rogue-icon.rc` | Windows用アイコンリソース |
+| `windows/windows-saved-games.ps1` | 「保存したゲーム」の保存先取得・作成 |
+| `rogue_ja.html` / `rogue_en.html` | 日本語・英語のHTML案内書 |
+| `rogue_ja.txt` / `rogue_en.txt` | 日本語・英語のテキスト案内書 |
+| `README_mac_linux_ja.md` / `README_mac_linux_en.md` | macOS / Linux向けREADME |
+
+同梱文書の一覧とゲームの紹介は[リポジトリのREADME](https://github.com/leopard-gecko/rogue_dos_tribute)をご覧ください。
+
+## 7. 著作権・ライセンス
+
+オリジナルRogueおよび既存コードの著作権・ライセンス条件、この派生版での日本語化・機能追加・Windows用アイコンなどの変更内容は、[LICENSE.TXT](LICENSE.TXT) に記載しています。

@@ -36,6 +36,39 @@ macOS / Linuxでは通常 `make`、WindowsではMSYS2 UCRT64環境からビル�
 | 日本語 | [rogue_ja.html](rogue_ja.html) | [rogue_ja.txt](rogue_ja.txt) |
 | English | [rogue_en.html](rogue_en.html) | [rogue_en.txt](rogue_en.txt) |
 
+## この移植版の主な特徴 / Main characteristics of this port
+
+Rogue DOS Tributeでは、ゲームデータと一部のルールをDOS版Rogue 1.48を参考に調整するとともに、現代の環境で利用するための機能を追加しています。
+
+*Rogue DOS Tribute adapts game data and selected rules with reference to DOS Rogue 1.48, while adding features for modern systems.*
+
+- UTF-8による日本語・英語の表示と、プレイ中の表示言語の切り替えに対応。  
+  *UTF-8 Japanese/English display with language switching during play.*
+- macOS・Linux向けのMakefileによるビルドと、設定用の軽量な `configure` スクリプトを用意。  
+  *Makefile-based builds on macOS/Linux with a lightweight `configure` helper.*
+- 標準ビルドでカラー表示、識別の巻き物の1種類化、通常プレイ中のカーソル非表示を既定に設定。  
+  *Standard builds default to color, a single identify-scroll type, and a hidden cursor during ordinary play.*
+- 拡張文字の使用を `extchars` / `noextchars` で切り替え可能。  
+  *Extended characters can be enabled or disabled with `extchars` / `noextchars`.*
+- 通路・迷路をDOS版風に表示し、通路上のプレイヤーには専用色を使用。  
+  *DOS-style corridor and maze-passage rendering, with a dedicated player color in passages.*
+- 水薬を怪物に投げたときの特殊効果を追加。  
+  *Special effects when throwing potions at monsters.*
+- 水薬の種類を調整し、`paralysis` と `thirst quenching` を追加。  
+  *A DOS-style potion list, including `paralysis` and `thirst quenching`.*
+- 識別の巻き物を1種類にし、`blank paper` と `vorpalize weapon` の巻き物を追加。  
+  *One identify-scroll type, plus `blank paper` and `vorpalize weapon` scrolls.*
+- Ice Monsterの凍結攻撃（`frost`）とslimeの分裂を追加。  
+  *Ice Monster frost attacks and slime splitting.*
+- `striking` のつえ・魔法の棒、crossbow、crossbow boltを追加。  
+  *The wand/staff of striking, crossbow, and crossbow bolts.*
+- 怪物の名前・能力値・フラグ・出現テーブルをDOS版Rogue 1.48を参考に調整。  
+  *Monster names, statistics, flags, and appearance tables adjusted toward DOS Rogue 1.48.*
+- `PROGRAM` で実行ファイル名を変更すると、既定のセーブ・スコア・ロックファイル名も連動して変更。  
+  *Executable naming with `PROGRAM`, which also changes the default save, score, and lock filenames.*
+- 日本語・英語の案内書とmanページの内容を、このソースの仕様に合わせて整備。  
+  *Japanese and English guides and manual pages updated to reflect this source.*
+
 ## 著作権・ライセンス / Copyright and license
 
 原典と既存コードの著作権・ライセンス、およびこの派生版での変更については、[LICENSE.TXT](LICENSE.TXT)をご覧ください。オリジナルのライセンス条項は維持しています。
