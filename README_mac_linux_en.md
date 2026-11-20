@@ -155,6 +155,8 @@ make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
 ./configure --program=rogue-dos --save-file=my.save --score-file=my.scr --lock-file=my.lck
 ```
 
+A quoted path such as `--file-dir='~/Documents'` is supported: `configure` expands the leading `~/` to the current user's home directory before saving it in `config.mk`. The same handling applies to other path options, including `--save-file`, `--score-file`, `--lock-file`, and `--prefix`. The `~username` form is not expanded.
+
 Relative paths are resolved from the game's working directory. Rebuild after changing data paths or filenames.
 
 ## 6. Files and distribution

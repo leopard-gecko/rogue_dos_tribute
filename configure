@@ -14,6 +14,7 @@ docdir='$(datarootdir)/doc/$(PROGRAM)'
 man6dir='$(mandir)/man6'
 ja_man_style=auto
 ja_man6dirs=
+ja_man6dirs_list=0
 
 program=rogue
 filedir=
@@ -84,8 +85,8 @@ for opt in "$@"; do
         --docdir=*) docdir=${opt#*=} ;;
         --man6dir=*) man6dir=${opt#*=} ;;
         --ja-man-style=*) ja_man_style=${opt#*=} ;;
-        --ja-man6dir=*) ja_man6dirs=${opt#*=} ;;
-        --ja-man6dirs=*) ja_man6dirs=${opt#*=} ;;
+        --ja-man6dir=*) ja_man6dirs=${opt#*=}; ja_man6dirs_list=0 ;;
+        --ja-man6dirs=*) ja_man6dirs=${opt#*=}; ja_man6dirs_list=1 ;;
         --program=*) program=${opt#*=} ;;
         --file-dir=*) filedir=${opt#*=} ;;
         --save-file=*) savefile=${opt#*=} ;;
@@ -99,6 +100,63 @@ for opt in "$@"; do
         *) echo "configure: error: unknown option: $opt" >&2; echo "Try './configure --help'." >&2; exit 1 ;;
     esac
 done
+
+# A quoted --file-dir='~/Documents' arrives as a literal tilde.  Expand
+# only a leading ~ or ~/ in path options; never evaluate arbitrary shell
+# expressions or alter relative paths and Makefile variables such as $(prefix).
+expand_home_path() {
+    case "$1" in
+        '~'|'~/'*)
+            if [ -z "${HOME:-}" ]; then
+                echo 'configure: error: HOME is required to expand ~ paths' >&2
+                return 1
+            fi
+            case "$HOME" in
+                /*) ;;
+                *) echo 'configure: error: HOME must be an absolute path' >&2; return 1 ;;
+            esac
+            case "$1" in
+                '~') printf '%s\n' "$HOME" ;;
+                '~/'*) printf '%s/%s\n' "${HOME%/}" "${1#??}" ;;
+            esac
+            ;;
+        *) printf '%s\n' "$1" ;;
+    esac
+}
+
+# --ja-man6dirs is explicitly a whitespace-separated list, unlike the
+# singular --ja-man6dir option. Keep its established list semantics.
+expand_home_path_list() {
+    set -f  # do not expand glob characters in directory names
+    # Deliberate word splitting of the documented directory list.
+    # shellcheck disable=SC2086
+    set -- $1
+    separator=
+    for directory do
+        resolved=$(expand_home_path "$directory") || return 1
+        printf '%s%s' "$separator" "$resolved"
+        separator=' '
+    done
+    printf '\n'
+}
+
+prefix=$(expand_home_path "$prefix") || exit 1
+exec_prefix=$(expand_home_path "$exec_prefix") || exit 1
+datarootdir=$(expand_home_path "$datarootdir") || exit 1
+datadir=$(expand_home_path "$datadir") || exit 1
+bindir=$(expand_home_path "$bindir") || exit 1
+mandir=$(expand_home_path "$mandir") || exit 1
+docdir=$(expand_home_path "$docdir") || exit 1
+man6dir=$(expand_home_path "$man6dir") || exit 1
+filedir=$(expand_home_path "$filedir") || exit 1
+savefile=$(expand_home_path "$savefile") || exit 1
+scorefile=$(expand_home_path "$scorefile") || exit 1
+lockfile=$(expand_home_path "$lockfile") || exit 1
+if [ "$ja_man6dirs_list" -eq 1 ]; then
+    ja_man6dirs=$(expand_home_path_list "$ja_man6dirs") || exit 1
+else
+    ja_man6dirs=$(expand_home_path "$ja_man6dirs") || exit 1
+fi
 
 case "$default_language" in
     auto|ja|en) ;;

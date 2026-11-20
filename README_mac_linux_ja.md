@@ -155,6 +155,8 @@ make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
 ./configure --program=rogue-dos --save-file=my.save --score-file=my.scr --lock-file=my.lck
 ```
 
+`--file-dir='~/Documents'` のように引用符付きで `~/` を指定しても、`configure` は現在のユーザーのホームディレクトリに展開してから `config.mk` に保存します。同じ処理は `--save-file`、`--score-file`、`--lock-file`、`--prefix` などのパス指定にも適用されます。`~ユーザー名` の形式は展開しません。
+
 相対パスを指定した場合は、ゲーム起動時の作業ディレクトリを基準とします。保存先やファイル名を変更した後は再ビルドしてください。
 
 ## 6. ファイルの説明と配布
