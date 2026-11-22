@@ -735,8 +735,8 @@ macro [v]
      In DOS-style key mode, F defines or changes the macro
      and Ctrl-F or F9 runs it; M and x are not commands. With
      nodoskeys, M defines or changes the macro and x runs
-     it.  For example, macro=s makes the run-macro command
-     perform one search. Self-call keys are stripped from
+     it.  For example, macro=5s makes the run-macro command
+     perform five searches. Self-call keys are stripped from
      saved macro text.
 
 name [account name]
