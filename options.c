@@ -43,6 +43,7 @@ typedef struct optstruct	OPTION;
 
 void	pr_optname(const OPTION *op);
 static void put_lang(void *vp);
+static void put_doskeys(void *vp);
 static int get_lang(void *vp, WINDOW *win);
 static int get_macro(void *vp, WINDOW *win);
 static int set_menu_option(const char *value, size_t len);
@@ -69,7 +70,10 @@ static OPTION	optlist[] = {
     {"language", JSTR_STATIC("表示する言語", "Language"),
 		 &jrogue_lang_is_japanese,	put_lang,	get_lang	},
     {"file",	 JSTR_STATIC("セーブファイル名", "Save file"),
-		 file_name,	put_str,	get_str		}
+		 file_name,	put_str,	get_str		},
+    {"doskeys", JSTR_STATIC("DOS版キー操作（表示のみ）",
+			  "DOS-style keys (read-only)"),
+		 &dos_keys,	put_doskeys,	NULL		}
 };
 void
 jrogue_apply_options_language(void)
@@ -84,6 +88,8 @@ jrogue_apply_options_language(void)
     optlist[7].o_prompt = JSTR("プレイ中のカーソルを表示", "Show cursor during play");
     optlist[8].o_prompt = JSTR("表示する言語", "Language");
     optlist[9].o_prompt = JSTR("セーブファイル名", "Save file");
+    optlist[10].o_prompt = JSTR("DOS版キー操作（表示のみ）",
+                              "DOS-style keys (read-only)");
 }
 
 
@@ -146,6 +152,9 @@ option(void)
     {
 	int old_color;
 
+	/* The last entry is shown by option_redraw(), not editable. */
+	if (op->o_getfunc == NULL)
+	    continue;
 	pr_optname(op);
 	get_str_use_initial = TRUE;
 	old_color = color_mode;
@@ -221,6 +230,13 @@ void
 put_bool(void *b)
 {
     waddstr(hw, *(int *) b ? JSTR("有効(T)", "True") : JSTR("無効(F)", "False"));
+}
+
+/* Display-only: unlike put_bool(), no T/F edit hint is shown. */
+static void
+put_doskeys(void *vp)
+{
+    waddstr(hw, *(int *)vp ? JSTR("有効", "On") : JSTR("無効", "Off"));
 }
 
 /*

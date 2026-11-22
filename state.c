@@ -65,6 +65,13 @@
 #define RSID_ROOMS        0XABCD0017
 #define RSID_SCROLLSYLLS   0XABCD0018
 
+/* These option bits extend the existing saved settings word.
+ * Older saves have none of them and retain their startup settings. */
+#define RSOPT_DOS_SETTINGS 0x0040
+#define RSOPT_DOS_KEYS     0x0080
+#define RSOPT_MENU_SEL     0x0100
+#define RSOPT_MENU_OFF     0x0200
+
 static int endian = 0x01020304;
 #define  big_endian ( *((char *)&endian) == 0x01 )
 
@@ -1393,6 +1400,12 @@ rs_save_file(FILE *savef)
     if (saw_amulet)	i |= 8;
     if (jrogue_char_mode_pc)	i |= 16;
     i |= 32;	/* char-mode field is present */
+    i |= RSOPT_DOS_SETTINGS;	/* doskeys and menu are saved */
+    if (dos_keys)	i |= RSOPT_DOS_KEYS;
+    if (strcmp(inventory_menu, "sel") == 0)
+	i |= RSOPT_MENU_SEL;
+    else if (strcmp(inventory_menu, "off") == 0)
+	i |= RSOPT_MENU_OFF;
     rs_write_int(savef, i);
 
     rs_write_chars(savef, file_name, MAXSTR);
@@ -1467,6 +1480,17 @@ rs_restore_file(FILE *savef)
     saw_amulet	= (i&8) ? TRUE : amulet;
     if (i&32)
 	jrogue_char_mode_pc = (i&16) ? TRUE : FALSE;
+    if (i & RSOPT_DOS_SETTINGS)
+    {
+	/* New saves restore both settings; older saves keep ROGUEOPTS. */
+	dos_keys = (i & RSOPT_DOS_KEYS) ? TRUE : FALSE;
+	if (i & RSOPT_MENU_OFF)
+	    jrogue_strlcpy(inventory_menu, "off", MAXSTR);
+	else if (i & RSOPT_MENU_SEL)
+	    jrogue_strlcpy(inventory_menu, "sel", MAXSTR);
+	else
+	    jrogue_strlcpy(inventory_menu, "on", MAXSTR);
+    }
 
     rs_read_chars(savef, file_name, MAXSTR);
     rs_read_chars(savef, huh, MAXSTR);
