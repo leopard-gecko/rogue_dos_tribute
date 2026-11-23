@@ -1,4 +1,4 @@
-name: Build Rogue DOS Tribute (JEC.091)
+name: Build Rogue DOS Tribute (JEC.092)
 
 on:
   push:
@@ -61,21 +61,12 @@ jobs:
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-binutils
             mingw-w64-ucrt-x86_64-pdcurses
-      - name: Build native Windows executable and package
+      - name: Build Windows distribution (both editions in one ZIP)
         run: |
           set -eu
-          make
+          make dist.win
           mkdir -p dist
-          cp rogue.exe dist/rogue.exe
-          make PROGRAM=rogue dist.win
-          cp rogue_dos_tribute_jec091_windows-rogue.zip dist/
-      - name: Build English-original and package
-        run: |
-          set -eu
-          make PROGRAM=rogue_original SAVEFILE=rogue.save SCOREFILE=rogue.scr LOCKFILE=rogue.lck original
-          cp rogue_original.exe dist/rogue_original.exe
-          make PROGRAM=rogue_original dist.win
-          cp rogue_dos_tribute_jec091_windows-rogue_original.zip dist/
+          cp rogue-dos.exe rogue-dos_original.exe rogue_dos_tribute_jec*_windows.zip dist/
       - uses: actions/upload-artifact@v6
         with:
           name: rogue-dos-tribute-windows-ucrt64-x64

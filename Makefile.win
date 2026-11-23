@@ -43,6 +43,13 @@ CFILES = $(ROGUE_COMMON_CFILES) $(ROGUE_WINDOWS_CFILES)
 OBJS = $(CFILES:.c=.win.o)
 ICON_OBJ = windows/rogue-icon.win.o
 WIN_DISTNAME = rogue_dos_tribute_jec092_windows
+WIN_DIST_PROGRAM = rogue-dos
+WIN_DIST_ORIGINAL = $(WIN_DIST_PROGRAM)_original
+# The two distributed executables share data paths. Preserve caller overrides,
+# but derive defaults from the distributed program, not the regular make target.
+WIN_DIST_SAVEFILE = $(if $(filter command line,$(origin SAVEFILE)),$(SAVEFILE),$(if $(strip $(RESOLVED_FILEDIR)),$(RESOLVED_FILEDIR)/$(WIN_DIST_PROGRAM).save,$(WIN_DIST_PROGRAM).save))
+WIN_DIST_SCOREFILE = $(if $(filter command line,$(origin SCOREFILE)),$(SCOREFILE),$(if $(strip $(RESOLVED_FILEDIR)),$(RESOLVED_FILEDIR)/$(WIN_DIST_PROGRAM).scr,$(WIN_DIST_PROGRAM).scr))
+WIN_DIST_LOCKFILE = $(if $(filter command line,$(origin LOCKFILE)),$(LOCKFILE),$(if $(strip $(RESOLVED_FILEDIR)),$(RESOLVED_FILEDIR)/$(WIN_DIST_PROGRAM).lck,$(WIN_DIST_PROGRAM).lck))
 # Name of the top-level folder inside the distributed ZIP (not the ZIP name).
 WIN_DISTDIR = Rogue DOS Tribute
 HEADERS = $(ROGUE_COMMON_HEADERS) $(ROGUE_WINDOWS_HEADERS)
@@ -110,23 +117,29 @@ wizard: master
 dist.src:
 	$(MAKE) ROGUE_BUILD=unix dist.src
 
-# Windows distribution ZIP: executable and user documentation only.
-# The distributed executable is always named rogue-dos.exe; PROGRAM still
-# determines the build target and embedded default save/score/lock filenames.
-# For matching data filenames, build with PROGRAM=rogue-dos before packaging.
-# ZIP archive name is fixed even when PROGRAM changes.
-# Build in a temporary directory and replace the destination only on success.
-# Requires the MSYS2 zip utility; no separate test or DLL collection scripts.
-dist.win: $(PROGRAM).exe
+# Windows binary distribution: both executables in ONE ZIP.
+# As in Rogue 5.2 JEC, compile each edition from clean objects so their
+# initial languages differ. The DOS settings are otherwise identical.
+# Both builds use the same embedded save/score/lock filenames.
+# The distribution names are fixed; ordinary make PROGRAM=/PROG= is unchanged.
+# Requires MSYS2 UCRT64's zip command. Never package a renamed normal build.
+dist.win:
+	@command -v zip >/dev/null 2>&1 || { echo "dist.win requires zip: pacman -S --needed zip" >&2; exit 1; }
+	@$(MAKE) ROGUE_BUILD=windows PROGRAM=$(WIN_DIST_PROGRAM) clean
+	@$(MAKE) ROGUE_BUILD=windows PROGRAM=$(WIN_DIST_PROGRAM) all DEFAULT_LANGUAGE=0 \
+	    SAVEFILE="$(WIN_DIST_SAVEFILE)" SCOREFILE="$(WIN_DIST_SCOREFILE)" LOCKFILE="$(WIN_DIST_LOCKFILE)"
+	@$(MAKE) ROGUE_BUILD=windows PROGRAM=$(WIN_DIST_ORIGINAL) clean
+	@$(MAKE) ROGUE_BUILD=windows PROGRAM=$(WIN_DIST_ORIGINAL) all DEFAULT_LANGUAGE=2 \
+	    SAVEFILE="$(WIN_DIST_SAVEFILE)" SCOREFILE="$(WIN_DIST_SCOREFILE)" LOCKFILE="$(WIN_DIST_LOCKFILE)"
 	@set -eu; \
 	    stage=$$(mktemp -d "$${TMPDIR:-/tmp}/rogue-dos-tribute-win.XXXXXXXX"); \
 	    trap 'rm -rf "$$stage"' 0; \
 	    trap 'exit 1' 1 2 3 15; \
 	    mkdir -p "$$stage/$(WIN_DISTDIR)"; \
-	    cp "$(PROGRAM).exe" "$$stage/$(WIN_DISTDIR)/rogue-dos.exe"; \
+	    cp "$(WIN_DIST_PROGRAM).exe" "$(WIN_DIST_ORIGINAL).exe" "$$stage/$(WIN_DISTDIR)/"; \
 	    cp LICENSE.TXT README_windows_ja.md README_windows_en.md \
 	       rogue_ja.txt rogue_en.txt rogue_ja.html rogue_en.html \
 	       "$$stage/$(WIN_DISTDIR)/"; \
 	    (cd "$$stage" && zip -qr "$$stage/candidate.zip" "$(WIN_DISTDIR)"); \
 	    mv "$$stage/candidate.zip" "$(CURDIR)/$(WIN_DISTNAME).zip"; \
-	    echo "Created $(WIN_DISTNAME).zip."
+	    echo "Created $(WIN_DISTNAME).zip (standard and English-initial executables)."

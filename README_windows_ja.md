@@ -62,7 +62,7 @@ make CFLAGS="-O2"
 
 ## 3. 起動と終了
 
-以下は通常の `make` で作成される `rogue.exe` の例です。Windowsバイナリ配布版では、実行ファイル名を `rogue-dos.exe` に読み替えてください。
+以下は通常の `make` で作成される `rogue.exe` の例です。Windowsバイナリ配布版では、実行ファイル名を `rogue-dos.exe` または `rogue-dos_original.exe` に読み替えてください。
 
 エクスプローラーで **`rogue.exe` をダブルクリック**するとゲームを開始します。既定のセーブファイルがある場合は、起動時に次の操作を選べます。
 
@@ -200,18 +200,16 @@ make dist.src
 **Windowsバイナリ配布用ZIP** は、次のコマンドで作成できます。
 
 ```sh
-make clean
-make PROGRAM=rogue-dos
-make PROGRAM=rogue-dos dist.win
+make dist.win
 ```
 
-`rogue_dos_tribute_jec092_windows.zip` が作成されます。展開すると **`Rogue DOS Tribute`** フォルダーが作成され、その中に **`rogue-dos.exe`** と説明書が入ります。通常の `make` で作成した `rogue.exe` を `make dist.win` で梱包した場合も、ZIP内では `rogue-dos.exe` になります。ただし名前を変更するだけでは、実行ファイルに組み込まれた既定のセーブ・スコア・ロックファイル名は変わりません。配布用には上記の `PROGRAM=rogue-dos` を推奨します。
+`rogue_dos_tribute_jec092_windows.zip` が作成されます。展開すると **`Rogue DOS Tribute`** フォルダーが作成され、その中に **`rogue-dos.exe`**（通常版）、**`rogue-dos_original.exe`**（英語初期設定版）と説明書が入ります。`make dist.win` は両方をクリーンな状態から個別にビルドし、**1つのZIP** にまとめます。DOS版のゲーム設定は共通で、初期表示言語のみが異なります。2つの実行ファイルは既定で **`rogue-dos.save` / `rogue-dos.scr` / `rogue-dos.lck`** を共用します。同じセーブデータを複数のプロセスから同時に使用しないでください。通常の `make` で作成する `rogue.exe` は変更されません。
 
 | ファイル | 用途 |
 |---|---|
-| `rogue-dos.exe` | Windowsバイナリ配布用ZIPに同梱する実行ファイル |
+| `rogue-dos.exe` / `rogue-dos_original.exe` | Windowsバイナリ配布用ZIPに同梱する通常版／英語初期設定版 |
 | `rogue.exe` | 通常の `make` で作成する実行ファイル |
-| `rogue-dos.save` / `rogue-dos.scr` / `rogue-dos.lck` | `PROGRAM=rogue-dos` でビルドした場合の既定のデータファイル名 |
+| `rogue-dos.save` / `rogue-dos.scr` / `rogue-dos.lck` | 配布用の2つの実行ファイルで共通の既定データファイル名 |
 | `Makefile` / `Makefile.win` | ソースからのビルド |
 | `windows/rogue.ico` / `windows/rogue-icon.rc` | Windows用アイコンリソース |
 | `windows/windows-saved-games.ps1` | 「保存したゲーム」の保存先取得・作成 |

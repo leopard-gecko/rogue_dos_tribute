@@ -62,7 +62,7 @@ If `PROGRAM` and `PROG` are both specified, `PROGRAM` takes precedence. Changing
 
 ## 3. Launch and exit
 
-The examples below use `rogue.exe` from a plain `make` build. For the Windows binary distribution, use `rogue-dos.exe` instead.
+The examples below use `rogue.exe` from a plain `make` build. For the Windows binary distribution, use `rogue-dos.exe` or `rogue-dos_original.exe` instead.
 
 **Double-click `rogue.exe`** in Explorer to start. When a default saved game exists, the startup menu offers:
 
@@ -200,18 +200,16 @@ This produces `rogue_dos_tribute_jec092-src.tar.gz`.
 Create the **Windows binary distribution ZIP** with:
 
 ```sh
-make clean
-make PROGRAM=rogue-dos
-make PROGRAM=rogue-dos dist.win
+make dist.win
 ```
 
-This creates `rogue_dos_tribute_jec092_windows.zip`. Extracting it creates a top-level folder named **`Rogue DOS Tribute`**, containing **`rogue-dos.exe`** and the documentation. Even if you package a regular `rogue.exe` build using `make dist.win`, the executable in the ZIP is renamed to `rogue-dos.exe`. Renaming the executable does **not** change the compiled-in default save, score, and lock filenames. Use `PROGRAM=rogue-dos` as above for a distribution with matching data filenames.
+This creates `rogue_dos_tribute_jec092_windows.zip`. Extracting it creates a top-level folder named **`Rogue DOS Tribute`**, containing **`rogue-dos.exe`** (standard edition), **`rogue-dos_original.exe`** (English-initial edition), and the documentation. `make dist.win` separately rebuilds both editions from clean objects and packages them in **one ZIP**. The DOS gameplay defaults remain the same; only the initial display language differs. Both executables share the default **`rogue-dos.save` / `rogue-dos.scr` / `rogue-dos.lck`** files. Do not use the same saved game concurrently from two processes. Ordinary `make` still builds `rogue.exe`.
 
 | File | Purpose |
 |---|---|
-| `rogue-dos.exe` | Executable included in the Windows binary distribution ZIP |
+| `rogue-dos.exe` / `rogue-dos_original.exe` | Standard and English-initial executables included in the Windows distribution ZIP |
 | `rogue.exe` | Executable produced by plain `make` |
-| `rogue-dos.save` / `rogue-dos.scr` / `rogue-dos.lck` | Default data filenames when built with `PROGRAM=rogue-dos` |
+| `rogue-dos.save` / `rogue-dos.scr` / `rogue-dos.lck` | Shared default data filenames for both distributed executables |
 | `Makefile` / `Makefile.win` | Source builds |
 | `windows/rogue.ico` / `windows/rogue-icon.rc` | Windows icon resources |
 | `windows/windows-saved-games.ps1` | Helper to resolve and create the Windows Saved Games location |
