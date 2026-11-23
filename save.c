@@ -69,7 +69,7 @@ restore_welcome_message(void)
     clrtoeol();
     jrogue_strlcpy(huh, welcome, MAXSTR);
     mpos = mbstrlen(welcome);
-    refresh();
+    jrogue_refresh_window(stdscr);
 }
 
 /*
@@ -112,7 +112,7 @@ over:
 	if (c == 'y' || c == 'Y')
 	{
 	    addstr("Yes\n");
-	    refresh();
+	    jrogue_refresh_window(stdscr);
 	    jrogue_strlcpy(buf, file_name, sizeof buf);
 	    goto gotfile;
 	}
@@ -203,7 +203,7 @@ save_file(FILE *savef, int manual)
     mvcur(0, _COLS - 1, _LINES - 1, 0); 
     putchar('\n');
     restore_terminal_background();
-    endwin();
+    jrogue_endwin();
     resetltchars();
     md_chmod(file_name, 0400);
 
@@ -354,7 +354,7 @@ restore(const char *file)
 #ifdef _WIN32
     jrogue_windows_retry_direct_launch_resize(0);
     if (jrogue_windows_sync_direct_launch_screen() == ERR) {
-        endwin();
+        jrogue_endwin();
         fputs(JSTR("ゲーム画面を80×24に調整できませんでした。\n",
                    "Could not adjust the game screen to 80x24.\n"), stderr);
         fclose(inf);
@@ -377,7 +377,7 @@ restore(const char *file)
     if (lines > _LINES)
     {
         restore_terminal_background();
-        endwin();
+        jrogue_endwin();
         printf(JSTR("セーブ元のゲームは%d行でプレイされていたようです。\n", "The saved game appears to have been played with %d lines.\n"),lines);
         printf(JSTR("このスクリーンは%d行なので、そのファイルを使うことはできません。\n", "This screen has %d lines, so that file cannot be used.\n"),_LINES);
 	fclose(inf);
@@ -387,7 +387,7 @@ restore(const char *file)
     if (cols > _COLS)
     {
         restore_terminal_background();
-        endwin();
+        jrogue_endwin();
         printf(JSTR("セーブ元のゲームは%d列でプレイされていたようです。\n", "The saved game appears to have been played with %d columns.\n"),cols);
         printf(JSTR("このスクリーンは%d列なので、そのファイルを使うことはできません。\n", "This screen has %d columns, so that file cannot be used.\n"),_COLS);
 	fclose(inf);
@@ -402,7 +402,7 @@ restore(const char *file)
 	bkgd(' ' | jrogue_normal_attr());
 	attrset(jrogue_normal_attr());
 	erase();
-	refresh();
+	jrogue_refresh_window(stdscr);
 	wbkgd(hw, ' ' | jrogue_normal_attr());
 	wattrset(hw, jrogue_normal_attr());
     }
@@ -412,7 +412,7 @@ restore(const char *file)
     if (restore_err != 0)
     {
 	restore_terminal_background();
-	endwin();
+	jrogue_endwin();
 	printf("%s", JSTR("セーブファイルを読み込めませんでした。\n", "Could not read save file.\n"));
 	fclose(inf);
 	md_tstpresume();
@@ -438,7 +438,7 @@ restore(const char *file)
 	if (sbuf2.st_nlink != 1 || syml)
 	{
 	    restore_terminal_background();
-	    endwin();
+	    jrogue_endwin();
 	    printf("%s", JSTR("\nそのファイルから再開することはできません。\n", "\nCannot restore from a linked file\n"));
 	    fclose(inf);
 	    md_tstpresume();
@@ -456,7 +456,7 @@ restore(const char *file)
 	if (unlink_result < 0)
 	{
 	    restore_terminal_background();
-	    endwin();
+	    jrogue_endwin();
 	    printf("Cannot unlink file\n");
 	    if (inf != NULL)
 		fclose(inf);
@@ -468,7 +468,7 @@ restore(const char *file)
     if (pstats.s_hpt <= 0)
     {
 	restore_terminal_background();
-	endwin();
+	jrogue_endwin();
 	printf("%s", JSTR("\n\"彼は死んだんだよ、ジム。\"\n", "\n\"He's dead, Jim\"\n"));
 	if (inf != NULL)
 	    fclose(inf);

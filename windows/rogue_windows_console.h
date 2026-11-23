@@ -15,6 +15,12 @@ int jrogue_windows_sync_direct_launch_screen(void);
  * Pass 0 for refresh(), 1 for doupdate().  Restores wrap after each frame. */
 int jrogue_windows_curtain_update(int staged);
 void jrogue_windows_sleep_ms(int milliseconds);
+/* Keep PDCurses' visibility state, but respect the terminal profile's shape. */
+void jrogue_windows_set_cursor_visible(int show);
+int jrogue_windows_refresh_window(WINDOW *win);
+/* Options additionally repaint Unicode glyphs before showing the cursor. */
+int jrogue_windows_refresh_option_window(WINDOW *win);
+void jrogue_windows_restore_terminal_cursor(void);
 /* Raw scoreboard is printed after endwin(), not through PDCurses. */
 void jrogue_windows_score_prepare(void);
 int jrogue_windows_score_uses_vt(void);

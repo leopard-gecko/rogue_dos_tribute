@@ -615,7 +615,7 @@ add_line(const char *fmt, const char *arg)
     {
 	wmove(hw, LINES - 1, 0);
 	waddstr(hw, prompt);
-	wrefresh(hw);
+	jrogue_refresh_window(hw);
 	jrogue_show_cursor(TRUE);
 	wait_for(hw, ' ');
 	jrogue_restore_cursor();

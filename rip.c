@@ -390,9 +390,9 @@ score(int amount, int flags, int monst)
     {
 	mvaddstr(_LINES - 1, 0 , JSTR("［リターンを押してランキングへ］", "[Press Enter to see rankings]"));
         jrogue_prepare_input_attr(stdscr);
-        refresh();
+        jrogue_refresh_window(stdscr);
         wgetnstr(stdscr,prbuf,80);
- 	endwin();
+ 	jrogue_endwin();
         resetltchars();
 	/*
 	 * free up space to "guarantee" there is space for the top_ten
@@ -886,13 +886,13 @@ death(int monst)
     else {
         erase();
         rip_render_grave(stdscr, monst, lt);
-        refresh();
+        jrogue_refresh_window(stdscr);
     }
 
     if (animate)
         jrogue_restore_cursor();
     move(_LINES - 1, 0);
-    refresh();
+    jrogue_refresh_window(stdscr);
     score(purse, SC_DEATH_KILLED, monst);
     if (!jrogue_score_waited_for_exit)
     {
@@ -939,7 +939,7 @@ total_winner(void)
         "admitted to the fighters guild.\n\n\n"));
     jrogue_set_normal_attr();
     mvaddstr(_LINES - 1, 0, JSTR("--スペースを押してください--", "--Press space to continue--"));
-    refresh();
+    jrogue_refresh_window(stdscr);
     jrogue_show_cursor(TRUE);
     wait_for(stdscr, ' ');
     jrogue_restore_cursor();
@@ -1008,7 +1008,7 @@ total_winner(void)
 	purse += worth;
     }
     printw(JSTR("   %5d  金塊          ", "   %5d  Gold Pieces          "), oldpurse);
-    refresh();
+    jrogue_refresh_window(stdscr);
     score(purse, SC_DEATH_WINNER, ' ');
     if (!jrogue_score_waited_for_exit)
     {

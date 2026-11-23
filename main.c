@@ -353,7 +353,7 @@ main(int argc, char **argv)
 #ifdef _WIN32
     jrogue_windows_retry_direct_launch_resize(0);
     if (jrogue_windows_sync_direct_launch_screen() == ERR) {
-        endwin();
+        jrogue_endwin();
         fputs(JSTR("ゲーム画面を80×24に調整できませんでした。\n",
                    "Could not adjust the game screen to 80x24.\n"), stderr);
         jrogue_windows_wait_for_direct_exit();
@@ -374,7 +374,7 @@ main(int argc, char **argv)
      */
     if (LINES < NUMLINES || COLS < NUMCOLS)
     {
-	endwin();
+	jrogue_endwin();
 	printf(JSTR("\nごめん！ 画面の大きさは最低 %dx%d なんだ。\n", "\nSorry, the screen must be at least %dx%d.\n"), NUMLINES, NUMCOLS);
 /*	endwin();	*/
 	my_exit(1);
@@ -414,7 +414,7 @@ main(int argc, char **argv)
 	bkgd(' ' | jrogue_normal_attr());
 	attrset(jrogue_normal_attr());
 	erase();
-	refresh();
+	jrogue_refresh_window(stdscr);
 	wbkgd(hw, ' ' | jrogue_normal_attr());
 	wattrset(hw, jrogue_normal_attr());
     }
@@ -490,8 +490,8 @@ void
 fatal(const char *s)
 {
     mvaddstr(_LINES - 2, 0, s);
-    refresh();
-    endwin();
+    jrogue_refresh_window(stdscr);
+    jrogue_endwin();
     my_exit(0);
 }
 
@@ -537,7 +537,7 @@ tstp(int ignored)
      */
     getyx(curscr, oy, ox);
     mvcur(0, _COLS - 1, _LINES - 1, 0);
-    endwin();
+    jrogue_endwin();
     resetltchars();
     fflush(stdout);
 	md_tstpsignal();
@@ -551,7 +551,12 @@ tstp(int ignored)
     keypad(stdscr,1);
     playltchars();
     clearok(curscr, TRUE);
-    wrefresh(curscr);
+#ifdef _WIN32
+    /* As after a shell escape, reinstate the saved game visibility before
+     * the first redraw, so suspend/resume never exposes an underline. */
+    jrogue_restore_cursor();
+#endif
+    jrogue_refresh_window(curscr);
     getyx(curscr, y, x);
     mvcur(y, x, oy, ox);
     fflush(stdout);
@@ -616,7 +621,7 @@ quit(int sig)
     else
 	str_attr("end your quest now (%Yes/%No) ?");
     look(FALSE);
-    refresh();
+    jrogue_refresh_window(stdscr);
     /*
      * The quit prompt is a single-key confirmation.  Keep the cursor hidden
      * here even when the user has enabled cursor display, matching the DOS
@@ -632,7 +637,7 @@ quit(int sig)
 	jrogue_clear_screen_chars();
 	mvprintw(_LINES - 2, 0, JSTR("所持金は＄%d", "You quit with %d gold pieces"), purse);
 	move(_LINES - 1, 0);
-	refresh();
+	jrogue_refresh_window(stdscr);
 	score(purse, 1, 0);
     if (!jrogue_score_waited_for_exit)
     {
@@ -648,7 +653,7 @@ quit(int sig)
 	clrtoeol();
 	status();
 	move(oy, ox);
-	refresh();
+	jrogue_refresh_window(stdscr);
 	mpos = 0;
 	count = 0;
 	to_death = FALSE;
@@ -672,7 +677,7 @@ leave(int sig)
     if (!isendwin())
     {
 	mvcur(0, _COLS - 1, _LINES - 1, 0);
-	endwin();
+	jrogue_endwin();
     }
 
     putchar('\n');
@@ -691,9 +696,9 @@ shell(void)
      * Set the terminal back to original mode
      */
     move(_LINES-1, 0);
-    refresh();
+    jrogue_refresh_window(stdscr);
     restore_terminal_background();
-    endwin();
+    jrogue_endwin();
     resetltchars();
     putchar('\n');
     in_shell = TRUE;

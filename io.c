@@ -109,11 +109,14 @@ endmsg(void)
 	standout2();
 	mvaddstr(0, mpos, JSTR(" --続く--", " --More--"));
 	standend2();
-	jrogue_show_cursor(TRUE);
+	/* DOS 1.48 waits at the top-row More prompt, not at the hero.
+	 * Leave the curses cursor just after the prompt, and honor the
+	 * cursor option: nocursor remains hidden even while waiting. */
+	jrogue_restore_cursor();
 	/* The startup curtain is still visible; do not expose the
 	 * off-screen dungeon or message before the raising animation. */
 	if (!jrogue_start_curtain_is_covered())
-	    refresh();
+	    jrogue_refresh_window(stdscr);
 	if (!msg_esc)
 	    wait_for(stdscr, ' ');
 	else
@@ -147,7 +150,7 @@ endmsg(void)
     /* Preserve the DOS curtain's separate drawing buffer: the caller
      * snapshots this composed screen, then reveals it one row at a time. */
     if (!jrogue_start_curtain_is_covered())
-        refresh();
+        jrogue_refresh_window(stdscr);
     return ~ESCAPE;
 }
 
@@ -544,7 +547,7 @@ show_win(const char *message)
     wmove(win, 0, 0);
     waddstr(win, message);
     touchwin(win);
-    wrefresh(win);
+    jrogue_refresh_window(win);
     wait_for(win, ' ');
     clearok(curscr, TRUE);
     touchwin(stdscr);

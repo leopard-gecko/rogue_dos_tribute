@@ -122,7 +122,7 @@ do_motion(THING *obj, int ydelta, int xdelta)
 		    jrogue_mvaddch_map(obj->o_pos.y, obj->o_pos.x, obj->o_type);
 		msleep(24);
 		jrogue_restore_cursor();
-		refresh();
+		jrogue_refresh_window(stdscr);
 	    }
 	    continue;
 	}

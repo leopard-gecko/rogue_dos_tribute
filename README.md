@@ -1,6 +1,6 @@
-# Rogue DOS Tribute — JEC.091
+# Rogue DOS Tribute — JEC.092
 
-**Rogue DOS Tribute JEC.091**
+**Rogue DOS Tribute JEC.092**
 
 Rogueは、文字や記号で描かれた迷宮を探索し、怪物と戦いながら「イェンダーの魔除け」を探す古典的なコンピューターRPGです。
 

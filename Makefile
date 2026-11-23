@@ -31,7 +31,7 @@ else ifeq ($(ROGUE_BUILD),unix)
 # Override variables on the make command line when local adjustments are needed.
 ###############################################################################
 
-DISTNAME = rogue_dos_tribute_jec091
+DISTNAME = rogue_dos_tribute_jec092
 PROG ?=
 
 -include config.mk

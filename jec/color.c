@@ -411,7 +411,7 @@ jrogue_prepare_input_attr(WINDOW *wn)
 {
     if (wn != NULL) {
 	jrogue_wset_normal_attr(wn);
-	wrefresh(wn);
+	jrogue_refresh_window(wn);
     }
 #ifndef _WIN32
     if (color_mode != FALSE && color_mode2 != FALSE) {

@@ -494,7 +494,7 @@ def:
 			mvaddch_projectile(pos.y, pos.x, dirch, beam_pair);
 			msleep(50);
 			jrogue_restore_cursor();
-			refresh();
+			jrogue_refresh_window(stdscr);
 	}
     }
     for (ep = spotpos; ep < sp; ep++)
@@ -503,7 +503,7 @@ def:
 	if (ep->s_under != 0)
 	    jrogue_mvaddch_map(ep->s_pos.y, ep->s_pos.x, ep->s_under);
 	jrogue_restore_cursor();
-	refresh();
+	jrogue_refresh_window(stdscr);
     }
 }
 

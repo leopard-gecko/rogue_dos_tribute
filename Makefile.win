@@ -42,7 +42,9 @@ include sources.mk
 CFILES = $(ROGUE_COMMON_CFILES) $(ROGUE_WINDOWS_CFILES)
 OBJS = $(CFILES:.c=.win.o)
 ICON_OBJ = windows/rogue-icon.win.o
-WIN_DISTNAME = rogue_dos_tribute_jec091_windows
+WIN_DISTNAME = rogue_dos_tribute_jec092_windows
+# Name of the top-level folder inside the distributed ZIP (not the ZIP name).
+WIN_DISTDIR = Rogue DOS Tribute
 HEADERS = $(ROGUE_COMMON_HEADERS) $(ROGUE_WINDOWS_HEADERS)
 CFLAGS ?= -O2 -g -Wall -Wextra
 DEFAULT_OPTION_CPPFLAGS ?=
@@ -109,6 +111,10 @@ dist.src:
 	$(MAKE) ROGUE_BUILD=unix dist.src
 
 # Windows distribution ZIP: executable and user documentation only.
+# The distributed executable is always named rogue-dos.exe; PROGRAM still
+# determines the build target and embedded default save/score/lock filenames.
+# For matching data filenames, build with PROGRAM=rogue-dos before packaging.
+# ZIP archive name is fixed even when PROGRAM changes.
 # Build in a temporary directory and replace the destination only on success.
 # Requires the MSYS2 zip utility; no separate test or DLL collection scripts.
 dist.win: $(PROGRAM).exe
@@ -116,10 +122,11 @@ dist.win: $(PROGRAM).exe
 	    stage=$$(mktemp -d "$${TMPDIR:-/tmp}/rogue-dos-tribute-win.XXXXXXXX"); \
 	    trap 'rm -rf "$$stage"' 0; \
 	    trap 'exit 1' 1 2 3 15; \
-	    mkdir -p "$$stage/$(WIN_DISTNAME)"; \
-	    cp "$(PROGRAM).exe" LICENSE.TXT README_windows_ja.md README_windows_en.md \
+	    mkdir -p "$$stage/$(WIN_DISTDIR)"; \
+	    cp "$(PROGRAM).exe" "$$stage/$(WIN_DISTDIR)/rogue-dos.exe"; \
+	    cp LICENSE.TXT README_windows_ja.md README_windows_en.md \
 	       rogue_ja.txt rogue_en.txt rogue_ja.html rogue_en.html \
-	       "$$stage/$(WIN_DISTNAME)/"; \
-	    (cd "$$stage" && zip -qr "$$stage/candidate.zip" "$(WIN_DISTNAME)"); \
-	    mv "$$stage/candidate.zip" "$(CURDIR)/$(WIN_DISTNAME)-$(PROGRAM).zip"; \
-	    echo "Created $(WIN_DISTNAME)-$(PROGRAM).zip."
+	       "$$stage/$(WIN_DISTDIR)/"; \
+	    (cd "$$stage" && zip -qr "$$stage/candidate.zip" "$(WIN_DISTDIR)"); \
+	    mv "$$stage/candidate.zip" "$(CURDIR)/$(WIN_DISTNAME).zip"; \
+	    echo "Created $(WIN_DISTNAME).zip."

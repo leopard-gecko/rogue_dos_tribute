@@ -1,4 +1,4 @@
-# Rogue DOS Tribute JEC.091 — Windows（日本語）
+# Rogue DOS Tribute JEC.092 — Windows（日本語）
 
 この文書では、**Windows 10 / 11（64ビット）** 向けのビルド、起動、環境変数、セーブ・スコアなどの保存先について説明します。ゲームの紹介と各OS向け文書の一覧は[リポジトリのREADME](https://github.com/leopard-gecko/rogue_dos_tribute)、操作方法やアイテムの説明は[「【運命の洞窟】への案内書」](rogue_ja.html)をご覧ください。
 
@@ -61,6 +61,8 @@ make CFLAGS="-O2"
 `PROGRAM` と `PROG` を両方指定した場合は、`PROGRAM` が優先されます。実行ファイル名を変更すると、既定のデータファイル名も連動して変更されます。
 
 ## 3. 起動と終了
+
+以下は通常の `make` で作成される `rogue.exe` の例です。Windowsバイナリ配布版では、実行ファイル名を `rogue-dos.exe` に読み替えてください。
 
 エクスプローラーで **`rogue.exe` をダブルクリック**するとゲームを開始します。既定のセーブファイルがある場合は、起動時に次の操作を選べます。
 
@@ -193,12 +195,23 @@ make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
 make dist.src
 ```
 
-`rogue_dos_tribute_jec091-src.tar.gz` が作成されます。
+`rogue_dos_tribute_jec092-src.tar.gz` が作成されます。
+
+**Windowsバイナリ配布用ZIP** は、次のコマンドで作成できます。
+
+```sh
+make clean
+make PROGRAM=rogue-dos
+make PROGRAM=rogue-dos dist.win
+```
+
+`rogue_dos_tribute_jec092_windows.zip` が作成されます。展開すると **`Rogue DOS Tribute`** フォルダーが作成され、その中に **`rogue-dos.exe`** と説明書が入ります。通常の `make` で作成した `rogue.exe` を `make dist.win` で梱包した場合も、ZIP内では `rogue-dos.exe` になります。ただし名前を変更するだけでは、実行ファイルに組み込まれた既定のセーブ・スコア・ロックファイル名は変わりません。配布用には上記の `PROGRAM=rogue-dos` を推奨します。
 
 | ファイル | 用途 |
 |---|---|
-| `rogue.exe` | Windows版の実行ファイル（ビルド後） |
-| `rogue.save` / `rogue.scr` / `rogue.lck` | セーブ・スコア・ロックファイル（プレイ中に使用） |
+| `rogue-dos.exe` | Windowsバイナリ配布用ZIPに同梱する実行ファイル |
+| `rogue.exe` | 通常の `make` で作成する実行ファイル |
+| `rogue-dos.save` / `rogue-dos.scr` / `rogue-dos.lck` | `PROGRAM=rogue-dos` でビルドした場合の既定のデータファイル名 |
 | `Makefile` / `Makefile.win` | ソースからのビルド |
 | `windows/rogue.ico` / `windows/rogue-icon.rc` | Windows用アイコンリソース |
 | `windows/windows-saved-games.ps1` | 「保存したゲーム」の保存先取得・作成 |

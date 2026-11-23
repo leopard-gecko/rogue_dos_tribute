@@ -94,7 +94,7 @@ SUCH DAMAGE.
 
 ===========================================================================
 
-Rogue DOS Tribute (JEC.091) — project notes
+Rogue DOS Tribute (JEC.092) — project notes
 ------------------------------------------
 Rogue DOS Tribute is a modified Rogue derivative based on the Rogue 5.4
 family and the Rogue 5.4.5 JEC porting framework. The game rules,

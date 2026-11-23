@@ -1,4 +1,4 @@
-# Rogue DOS Tribute JEC.091 — macOS / Linux (English)
+# Rogue DOS Tribute JEC.092 — macOS / Linux (English)
 
 This document explains how to build, run, and install Rogue DOS Tribute on **macOS, Linux, and Raspberry Pi OS**, including save, score, and lock file locations. For an introduction and a list of platform-specific documents, see the [repository README](README.md). For controls and items, see [A Guide to the Dungeons of Doom](rogue_en.html).
 
@@ -179,7 +179,7 @@ Create a source archive with:
 make dist.src
 ```
 
-This creates `rogue_dos_tribute_jec091-src.tar.gz`, containing source files, build files, license, READMEs, guides, and manual-page templates.
+This creates `rogue_dos_tribute_jec092-src.tar.gz`, containing source files, build files, license, READMEs, guides, and manual-page templates.
 
 To create an archive with the executable and generated manual pages, run:
 
@@ -187,7 +187,7 @@ To create an archive with the executable and generated manual pages, run:
 make dist
 ```
 
-This produces `rogue_dos_tribute_jec091.tar.gz`. For an introduction and links to the bundled documents, see the [repository README](README.md).
+This produces `rogue_dos_tribute_jec092.tar.gz`. For an introduction and links to the bundled documents, see the [repository README](README.md).
 
 ## 7. Copyright and licenses
 

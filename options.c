@@ -103,9 +103,10 @@ jrogue_apply_options_language(void)
 static void
 option_refresh(WINDOW *win)
 {
-    wrefresh(win);
 #ifdef _WIN32
-    jrogue_windows_option_vt_restore_nonbmp(win);
+    jrogue_windows_refresh_option_window(win);
+#else
+    jrogue_refresh_window(win);
 #endif
 }
 

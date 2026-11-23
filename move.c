@@ -276,7 +276,7 @@ turnref(void)
 	{
 	    leaveok(stdscr, TRUE);
 	    jrogue_restore_cursor();
-	    refresh();
+	    jrogue_refresh_window(stdscr);
 	    leaveok(stdscr, FALSE);
 	}
 	pp->p_flags |= F_SEEN;

@@ -18,6 +18,172 @@
 #define JROGUE_WIN_COLS 80
 #define JROGUE_WIN_ROWS 24
 
+/* PDCursesMod VT selects an underline on curs_set(1) and a block on
+ * endwin().  Neither is necessarily the user's terminal cursor shape.
+ * Restore the profile's default shape (DECSCUSR 0) after rendering, while
+ * keeping cursor visibility a separate game option.  The cache avoids
+ * resetting visibility on every game turn. */
+static int game_cursor_visibility = -1;
+static int cursor_resume_pending = 0;
+
+static HANDLE
+cursor_vt_output(void)
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD mode;
+    const char *term;
+
+    if (out == NULL || out == INVALID_HANDLE_VALUE)
+        return NULL;
+    if (GetConsoleMode(out, &mode)) {
+        if ((mode & (ENABLE_PROCESSED_OUTPUT |
+                     ENABLE_VIRTUAL_TERMINAL_PROCESSING)) ==
+                    (ENABLE_PROCESSED_OUTPUT |
+                     ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+            return out;
+        return NULL;
+    }
+    /* MSYS2/mintty stdout is a VT pipe, not a Win32 console.  Avoid
+     * emitting escape codes when stdout is redirected to a regular file. */
+    term = getenv("TERM");
+    if (GetFileType(out) == FILE_TYPE_PIPE && getenv("MSYSTEM") != NULL &&
+        term != NULL && *term != '\0' && strcmp(term, "dumb") != 0)
+        return out;
+    return NULL;
+}
+
+static void
+cursor_write_vt(HANDLE out, const char *seq, DWORD len)
+{
+    DWORD written;
+    fflush(stdout);  /* Drain pending CRT/PDCurses output first. */
+    (void)WriteFile(out, seq, len, &written, NULL);
+}
+
+/* DECSCUSR 0 changes shape only, never the visible/hidden state. */
+static void
+cursor_restore_default_shape(void)
+{
+    static const char default_shape[] = "\033[0 q";
+    HANDLE out = cursor_vt_output();
+    if (out != NULL)
+        cursor_write_vt(out, default_shape, sizeof default_shape - 1);
+}
+
+static void
+cursor_resume_vt_processing(void)
+{
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD mode;
+
+    /* PDCursesMod disables VT processing in endwin().  Re-enable it before
+     * the first curses drawing or visibility command after shell escape. */
+    if (out != NULL && out != INVALID_HANDLE_VALUE &&
+        GetConsoleMode(out, &mode))
+        (void)SetConsoleMode(out, mode | ENABLE_PROCESSED_OUTPUT |
+                                        ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+}
+
+void
+jrogue_windows_set_cursor_visible(int show)
+{
+    int visible = show ? 1 : 0;
+    if (cursor_resume_pending)
+        cursor_resume_vt_processing();
+    if (game_cursor_visibility == visible)
+        return;
+    (void)curs_set(visible);
+    game_cursor_visibility = visible;
+    /* curs_set(1) selects an underline on PDCursesMod's VT backend. */
+    if (visible)
+        cursor_restore_default_shape();
+}
+
+static int
+jrogue_windows_refresh_impl(WINDOW *win, int repaint_options)
+{
+    static const char hide[] = "\033[?25l";
+    static const char show[] = "\033[?25h";
+    HANDLE out = NULL;
+    int result;
+
+    if (cursor_resume_pending)
+        cursor_resume_vt_processing();
+
+    /* Temporarily hide the physical cursor while PDCurses renders.
+     * Do not toggle its internal curses visibility state: after rendering,
+     * the cursor must still be visible at the correct logical position. */
+    if (game_cursor_visibility == 1)
+        out = cursor_vt_output();
+    if (out != NULL)
+        cursor_write_vt(out, hide, sizeof hide - 1);
+    result = wrefresh(win);
+    if (result != ERR) {
+        (void)napms(0);  /* Drain startup palette's delayed repaint. */
+        if (repaint_options)
+            jrogue_windows_option_vt_restore_nonbmp(win);
+    }
+    if (out != NULL)
+        cursor_write_vt(out, show, sizeof show - 1);
+    if (result == ERR)
+        return result;
+
+    if (cursor_resume_pending) {
+        /* First curses refresh after endwin can reset cursor visibility. */
+        if (game_cursor_visibility >= 0)
+            (void)curs_set(game_cursor_visibility);
+        cursor_resume_pending = 0;
+    }
+
+    /* MUST follow the final curses redraw; the backend can set underline
+     * again during refresh, including startup or shell resume. */
+    if (game_cursor_visibility == 1)
+        cursor_restore_default_shape();
+    return result;
+}
+
+/* Option text may contain non-BMP emoji.  Keep the cursor hidden until
+ * their supplementary VT repaint also finishes, as in the 3.6 redraw path. */
+int
+jrogue_windows_refresh_option_window(WINDOW *win)
+{
+    return jrogue_windows_refresh_impl(win, 1);
+}
+
+int
+jrogue_windows_refresh_window(WINDOW *win)
+{
+    return jrogue_windows_refresh_impl(win, 0);
+}
+
+void
+jrogue_windows_restore_terminal_cursor(void)
+{
+    static const char restore[] = "\033[0 q\033[?25h";
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD mode, wanted;
+
+    /* endwin() forces a block cursor, then disables VT mode.  Re-enable
+     * VT temporarily so both Console Host and Windows Terminal honor the
+     * profile-default shape; restore the old console mode afterwards. */
+    if (out != NULL && out != INVALID_HANDLE_VALUE &&
+        GetConsoleMode(out, &mode)) {
+        wanted = mode | ENABLE_PROCESSED_OUTPUT |
+                        ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        if (wanted == mode || SetConsoleMode(out, wanted)) {
+            cursor_write_vt(out, restore, sizeof restore - 1);
+            if (wanted != mode)
+                (void)SetConsoleMode(out, mode);
+        }
+    } else {
+        out = cursor_vt_output();
+        if (out != NULL)
+            cursor_write_vt(out, restore, sizeof restore - 1);
+    }
+    game_cursor_visibility = -1;
+    cursor_resume_pending = 1;
+}
+
 /* 0 = not yet conclusive, 1 = direct launch, -1 = shared/shell. */
 static int resize_permission = 0;
 

@@ -1,4 +1,4 @@
-# Rogue DOS Tribute JEC.091 — macOS / Linux（日本語）
+# Rogue DOS Tribute JEC.092 — macOS / Linux（日本語）
 
 この文書では、**macOS、Linux、Raspberry Pi OS** でのビルド、起動、インストール、セーブ・スコアなどの保存先について説明します。ゲームの紹介と各OS向け文書の一覧は[リポジトリのREADME](README.md)、操作方法やアイテムの説明は[「【運命の洞窟】への案内書」](rogue_ja.html)をご覧ください。
 
@@ -179,7 +179,7 @@ make PROGRAM=rogue-dos SAVEFILE=my.save SCOREFILE=my.scr LOCKFILE=my.lck
 make dist.src
 ```
 
-`rogue_dos_tribute_jec091-src.tar.gz` が作成され、ソースコード、ビルド用ファイル、ライセンス、README、案内書、manページの原稿が含まれます。
+`rogue_dos_tribute_jec092-src.tar.gz` が作成され、ソースコード、ビルド用ファイル、ライセンス、README、案内書、manページの原稿が含まれます。
 
 実行ファイルと生成済みmanページを含むアーカイブは、次のコマンドで作成します。
 
@@ -187,7 +187,7 @@ make dist.src
 make dist
 ```
 
-`rogue_dos_tribute_jec091.tar.gz` が作成されます。ゲームの紹介と同梱文書へのリンクは[リポジトリのREADME](README.md)をご覧ください。
+`rogue_dos_tribute_jec092.tar.gz` が作成されます。ゲームの紹介と同梱文書へのリンクは[リポジトリのREADME](README.md)をご覧ください。
 
 ## 7. 著作権・ライセンス
 

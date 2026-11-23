@@ -199,7 +199,7 @@ jrogue_windows_launch_save(const char *default_path)
         !jrogue_windows_save_exists(default_path))
         return NULL;
     for (;;) {
-        printf("\n                 Rogue DOS Tribute JEC.091\n\n");
+        printf("\n                 Rogue DOS Tribute JEC.092\n\n");
         printf("%s\n\n", JSTR("セーブした冒険が見つかりました。",
                                 "A saved adventure was found."));
         printf("[R/Enter] %s\n", JSTR("セーブした冒険を再開する",

@@ -239,13 +239,37 @@ jrogue_strlcat(char *dst, const char *src, size_t dstsize)
 void
 jrogue_show_cursor(int show)
 {
-    curs_set(show ? 1 : 0);
+#ifdef _WIN32
+    jrogue_windows_set_cursor_visible(show);
+#else
+    (void)curs_set(show ? 1 : 0);
+#endif
 }
 
 void
 jrogue_restore_cursor(void)
 {
     jrogue_show_cursor(show_cursor);
+}
+
+int
+jrogue_refresh_window(WINDOW *win)
+{
+#ifdef _WIN32
+    return jrogue_windows_refresh_window(win);
+#else
+    return wrefresh(win);
+#endif
+}
+
+int
+jrogue_endwin(void)
+{
+    int result = endwin();
+#ifdef _WIN32
+    jrogue_windows_restore_terminal_cursor();
+#endif
+    return result;
 }
 
 

@@ -139,7 +139,7 @@ jrogue_implode_screen(void)
     for (step = 0; step < IMPLODE_STEPS && top < bottom && left < right;
          step++, top++, bottom--, left += col_inc, right -= col_inc) {
         jrogue_implode_draw_box(top, left, bottom, right, FALSE);
-        refresh();
+        jrogue_refresh_window(stdscr);
         msleep(IMPLODE_DELAY_MS);
 
         for (y = top + 1; y < bottom; y++) {
@@ -147,7 +147,7 @@ jrogue_implode_screen(void)
             jrogue_implode_clear_strip(y, right - col_inc + 1, right - 1);
         }
         jrogue_implode_draw_box(top, left, bottom, right, TRUE);
-        refresh();
+        jrogue_refresh_window(stdscr);
     }
     jrogue_set_normal_attr();
     jrogue_restore_cursor();

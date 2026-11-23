@@ -427,7 +427,7 @@ inventory_select(const THING *list, int type, const char *purpose)
     waddstr(hw, prompt);
     wclrtoeol(hw);
     touchwin(hw);
-    wrefresh(hw);
+    jrogue_refresh_window(hw);
 
     jrogue_show_cursor(TRUE);
     do

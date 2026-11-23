@@ -140,7 +140,7 @@ dos_fake_dos(void)
 	wmove(win, row, 0);
 	wprintw(win, "\nC>");
 	wclrtoeol(win);
-	wrefresh(win);
+	jrogue_refresh_window(win);
 	prbuf[0] = '\0';
 	if (get_str(prbuf, win) == QUIT)
 	    break;
@@ -151,7 +151,7 @@ dos_fake_dos(void)
     jrogue_restore_cursor();
     clearok(curscr, TRUE);
     touchwin(stdscr);
-    wrefresh(stdscr);
+    jrogue_refresh_window(stdscr);
     msg("");
 }
 /*
@@ -205,7 +205,7 @@ command(void)
 	if (!((running || count) && jump))
 	{
 	    jrogue_restore_cursor();
-	    refresh();			/* Draw screen */
+	    jrogue_refresh_window(stdscr);	/* Draw without cursor flicker */
 	}
 	if (running && !jump)
 	    msleep(24);
@@ -698,7 +698,7 @@ over:
 		    else
 		    {
 			clearok(curscr,TRUE);
-			wrefresh(curscr);
+			jrogue_refresh_window(curscr);
 		    }
 		when DOSCMD_TOGGLE_TERSE:
 		    after = FALSE;
@@ -1088,7 +1088,7 @@ show_help_list(const struct h_list *list, int use_glyphs,
 	{
 	    waddstr(hw, JSTR("--スペースで続き、ESCで戻る--",
 		"--Press space for more, Esc to continue--"));
-	    wrefresh(hw);
+	    jrogue_refresh_window(hw);
 	    jrogue_show_cursor(TRUE);
 	    do
 		ch = wreadchar(hw);
@@ -1102,7 +1102,7 @@ show_help_list(const struct h_list *list, int use_glyphs,
 	{
 	    waddstr(hw, JSTR("--スペースを押してください--",
 		"--Press space to continue--"));
-	    wrefresh(hw);
+	    jrogue_refresh_window(hw);
 	    jrogue_show_cursor(TRUE);
 	    wait_for(hw, ' ');
 	    jrogue_restore_cursor();
@@ -1113,7 +1113,7 @@ show_help_list(const struct h_list *list, int use_glyphs,
     clearok(stdscr, TRUE);
     msg("");
     touchwin(stdscr);
-    wrefresh(stdscr);
+    jrogue_refresh_window(stdscr);
 }
 
 /*

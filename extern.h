@@ -164,6 +164,10 @@ extern int show_cursor;
 extern int _COLS, _LINES;
 void jrogue_show_cursor(int show);
 void jrogue_restore_cursor(void);
+/* Use for screen updates and shutdown so cursor shape and visibility survive
+ * PDCurses redraw/endwin on Windows.  Ordinary curses behavior elsewhere. */
+int jrogue_refresh_window(WINDOW *win);
+int jrogue_endwin(void);
 
 /* Palette tables, background, PC glyphs and drawing primitives. */
 #include "jec/color.h"

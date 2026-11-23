@@ -1,4 +1,4 @@
-# Rogue DOS Tribute JEC.091 — Windows (English)
+# Rogue DOS Tribute JEC.092 — Windows (English)
 
 This document explains how to build and run Rogue DOS Tribute on **64-bit Windows 10 / 11**, including environment variables and save, score, and lock file locations. For an introduction and platform documentation, see the [repository README](https://github.com/leopard-gecko/rogue_dos_tribute). For gameplay, commands, and items, see [A Guide to the Dungeons of Doom](rogue_en.html).
 
@@ -61,6 +61,8 @@ make CFLAGS="-O2"
 If `PROGRAM` and `PROG` are both specified, `PROGRAM` takes precedence. Changing the executable name also changes the default data file names.
 
 ## 3. Launch and exit
+
+The examples below use `rogue.exe` from a plain `make` build. For the Windows binary distribution, use `rogue-dos.exe` instead.
 
 **Double-click `rogue.exe`** in Explorer to start. When a default saved game exists, the startup menu offers:
 
@@ -193,12 +195,23 @@ Create a full source-distribution archive from MSYS2 UCRT64 with:
 make dist.src
 ```
 
-This produces `rogue_dos_tribute_jec091-src.tar.gz`.
+This produces `rogue_dos_tribute_jec092-src.tar.gz`.
+
+Create the **Windows binary distribution ZIP** with:
+
+```sh
+make clean
+make PROGRAM=rogue-dos
+make PROGRAM=rogue-dos dist.win
+```
+
+This creates `rogue_dos_tribute_jec092_windows.zip`. Extracting it creates a top-level folder named **`Rogue DOS Tribute`**, containing **`rogue-dos.exe`** and the documentation. Even if you package a regular `rogue.exe` build using `make dist.win`, the executable in the ZIP is renamed to `rogue-dos.exe`. Renaming the executable does **not** change the compiled-in default save, score, and lock filenames. Use `PROGRAM=rogue-dos` as above for a distribution with matching data filenames.
 
 | File | Purpose |
 |---|---|
-| `rogue.exe` | Windows executable (after building) |
-| `rogue.save` / `rogue.scr` / `rogue.lck` | Save, score, and lock files used during play |
+| `rogue-dos.exe` | Executable included in the Windows binary distribution ZIP |
+| `rogue.exe` | Executable produced by plain `make` |
+| `rogue-dos.save` / `rogue-dos.scr` / `rogue-dos.lck` | Default data filenames when built with `PROGRAM=rogue-dos` |
 | `Makefile` / `Makefile.win` | Source builds |
 | `windows/rogue.ico` / `windows/rogue-icon.rc` | Windows icon resources |
 | `windows/windows-saved-games.ps1` | Helper to resolve and create the Windows Saved Games location |
