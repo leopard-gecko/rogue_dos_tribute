@@ -6,9 +6,9 @@ Rogueは、文字や記号で描かれた迷宮を探索し、怪物と戦いな
 
 *Rogue is a classic dungeon-crawling computer RPG in which players explore a text-based maze, fight monsters, and search for the Amulet of Yendor.*
 
-**Rogue DOS Tribute** は、Rogue 5.4系のソースコード（Rogue 5.4.5 JECの移植基盤を含む）をもとに、**DOS版Rogue 1.48**を参考として、怪物・アイテム・ゲームルール・キー操作・演出を再構成した派生版です。DOS版Rogue 1.48の原典ソースを直接移植したものではありません。日本語・英語の切り替え、カラー表示、現代のmacOS・Linux・Windowsへの対応を追加しています。
+**Rogue DOS Tribute** は、Rogue 5.4.5 JECのソースコードをもとに、**DOS版Rogue 1.48**を参考として、怪物・アイテム・ゲームルール・キー操作・演出を再構成した派生版です。DOS版Rogue 1.48の原典ソースを直接移植したものではありません。Rogue 5.4.5 JECと同様に、日本語・英語の切り替え、カラー表示、現代のmacOS・Linux・Windowsへの対応を追加しています。
 
-*Rogue DOS Tribute is a derivative based on Rogue 5.4-family source code (including the Rogue 5.4.5 JEC porting framework). Its monsters, items, gameplay rules, controls, and presentation have been reworked with reference to DOS Rogue 1.48. It is not a direct port of the original DOS Rogue 1.48 source. It adds Japanese/English switching, color display, and support for modern macOS, Linux, and Windows.*
+***Rogue DOS Tribute** is a derivative based on the source code of Rogue 5.4.5 JEC. With **DOS Rogue 1.48** as a reference, its monsters, items, gameplay rules, keyboard controls, and presentation have been reworked. It is not a direct port of the original DOS Rogue 1.48 source code. Like Rogue 5.4.5 JEC, it adds Japanese/English language switching, color display, and support for modern macOS, Linux, and Windows.*
 
 ## 対応環境とREADME / Platforms and documentation
 
